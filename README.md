@@ -3,8 +3,8 @@
 Repositório oficial para o desenvolvimento do Projeto Integrador (2026.1).
 Professor: Leonardo Melo de Medeiros
 
-### Equipe Inicial:
-- Roberto dos Santos (Líder Técnico / Front-end)
-- João Victhor (Desenvolvedor Backend)
-- Joberval Magalhães (Tester / QA)
-- Wallex Kaua (A definir)
+### Equipe e Funções:
+- Roberto dos Santos: Líder Técnico, Front-end e Banco de Dados
+- João Victhor: Desenvolvedor Backend
+- Joberval Magalhães: Tester / QA
+- Wallex Kaua: Desenvolvedor Front-end
