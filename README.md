@@ -1,13 +1,23 @@
-# Projeto Integrador - PINT1123
+# Banco de Talentos Comunit√°rio
 
-RepositÛrio oficial para o desenvolvimento do Projeto Integrador (2026.1).
+Reposit√≥rio oficial para o desenvolvimento do Projeto Integrador (PINT1123 - 2026.1).
 Professor: Leonardo Melo de Medeiros
 
-### Equipe e FunÁıes:
-- Roberto dos Santos: LÌder TÈcnico, Arquitetura de Software
-- Jo„o Victhor: Desenvolvedor Backend
-- Joberval Magalh„es: Tester / QA
+### Equipe e Fun√ß√µes:
+- Roberto dos Santos: Lider T√©cnico, Gerente de Projeto e Engenheiro de Qualidade
 - Wallex Kaua: Desenvolvedor Front-end
 - Thiago Luiz: Desenvolvedor Front-end
+- Jo√£o Victhor: Desenvolvedor Backend
 - Leonardo Ferro: Banco de Dados
-- Marcelo Feitoza: A definir
+- Marcelo Feitoza: Desenvolvedor de IA (NLP)
+- Joberval Magalh√£es: Tester / QA
+
+---
+
+### O Projeto
+Plataforma de impacto social voltada para a visibilidade de trabalhadores informais, utilizando Inteligencia Artificial para otimizacao de perfis profissionais e geracao de renda local.
+
+### Tecnologias e Metodologia:
+* Metodologia: Agil (Scrum/Kanban)
+* Versionamento: Git Flow (Branches, Pull Requests e Issues)
+* Arquitetura: Cliente-Servidor (API REST)
