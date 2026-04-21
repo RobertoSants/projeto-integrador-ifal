@@ -1,0 +1,29 @@
+# Banco de dados local
+db.sqlite3
+
+# Ambiente virtual Python
+venv/
+env/
+.venv/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Arquivos de ambiente
+.env
+.env.local
+
+# Arquivos de mídia (uploads)
+media/
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# VS Code
+.vscode/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
