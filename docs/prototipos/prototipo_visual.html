@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Talentos - Alagoas Regional (AMA)</title>
+    <!-- Importação de fontes para modernizar o visual -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CONFIGURAÇÃO DE CORES: Identidade visual tricolor de Alagoas */
+        :root {
+            --al-blue: #003399;
+            --al-red: #d32f2f;
+            --al-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --text-main: #2d3436;
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); scroll-behavior: smooth; }
+
+        /* CABEÇALHO: Navegação principal e Logo */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 8%; background: var(--al-white);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--al-blue);
+        }
+
+        .logo { font-family: 'Montserrat', sans-serif; font-size: 22px; color: var(--al-blue); font-weight: 800; z-index: 1001; }
+        .logo span { color: var(--al-red); }
+
+        /* NAVEGAÇÃO DESKTOP */
+        nav { display: flex; gap: 25px; align-items: center; }
+        nav a { text-decoration: none; color: var(--al-blue); font-size: 14px; font-weight: 700; transition: 0.3s; }
+        nav a:hover { color: var(--al-red); }
+
+        /* BOTÃO HAMBÚRGUER: Visível apenas no mobile */
+        .hamburger {
+            display: none; cursor: pointer; background: none; border: none;
+            flex-direction: column; gap: 5px; z-index: 1001;
+        }
+        .hamburger span { width: 30px; height: 3px; background: var(--al-blue); transition: 0.3s; }
+
+        /* SEÇÃO HERO: Primeira impressão com a imagem retro de Alagoas */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                        url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') center/cover;
+            height: 85vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; color: white; padding: 0 10%;
+        }
+
+        .hero h1 { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0; line-height: 1.1; text-transform: uppercase; }
+        .hero h1 span { color: var(--al-red); }
+        .hero p { font-size: 1.2rem; max-width: 750px; margin: 25px 0; opacity: 0.9; font-weight: 400; }
+
+        /* BOTÕES DE AÇÃO (CTA) */
+        .btn-cta { 
+            background: var(--al-red); color: white; padding: 18px 40px; 
+            border-radius: 4px; text-decoration: none; font-weight: 800; 
+            letter-spacing: 1px; box-shadow: 0 5px 0 #9e2020; transition: 0.2s; 
+            display: inline-block;
+        }
+        .btn-cta:hover { transform: translateY(3px); box-shadow: 0 2px 0 #9e2020; }
+
+        /* BOX DE BUSCA: Conecta com o endpoint /api/search/ */
+        .search-box { 
+            background: white; padding: 30px; border-radius: 8px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
+            margin: -60px auto 0; width: 85%; max-width: 1100px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;
+            border-top: 6px solid var(--al-red);
+        }
+
+        .search-box input, .search-box select { padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+
+        /* SEÇÕES GERAIS */
+        .section { padding: 80px 10%; text-align: center; }
+        
+        /* PASSO A PASSO DIDÁTICO: Auxílio para o interior de Alagoas */
+        .tutorial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 40px; }
+        .step-card { background: white; padding: 30px; border-radius: 12px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--al-blue); }
+        .step-num { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 45px; height: 45px; background: var(--al-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; border: 4px solid var(--bg-light); }
+
+        /* EIXOS SETORIAIS: Regra de negócio da AMA */
+        .grid-sectors { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
+        .sector-card { background: white; padding: 30px; border-radius: 10px; border: 1px solid #eee; transition: 0.3s; }
+        .sector-card:hover { border-color: var(--al-blue); transform: translateY(-5px); }
+
+        /* LISTAGEM DE TALENTOS: Exibição dos cards de profissionais */
+        .talents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; position: relative; border-bottom: 4px solid var(--al-blue); }
+        .card-local { position: absolute; top: 15px; left: 15px; background: var(--al-blue); color: white; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; z-index: 5; }
+        .card-img { height: 200px; background-size: cover; background-position: center; background-color: #ddd; }
+        .card-body { padding: 25px; }
+        .card-body h3 { margin: 0; color: var(--al-blue); font-size: 20px; }
+        .card-body p { font-size: 14px; color: #666; margin: 10px 0; }
+        .rating { color: #f1c40f; font-weight: bold; }
+
+        /* TECNOLOGIA E IA: Explicação do valor tecnológico do projeto */
+        .how-it-works { background: #f0f2f5; padding: 80px 10%; }
+        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-top: 50px; }
+        .step-num-icon { width: 40px; height: 40px; background: var(--al-red); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin: 0 auto 20px; }
+
+        footer { background: var(--al-blue); color: white; padding: 60px 10% 30px; text-align: center; }
+
+        /* RESPONSIVIDADE: Ajustes para tablets e smartphones */
+        @media (max-width: 768px) {
+            header { padding: 15px 5%; }
+            .hero h1 { font-size: 2.2rem; }
+            
+            .hamburger { display: flex; } /* Mostra o botão hambúrguer no mobile */
+
+            nav {
+                display: none; /* Esconde o menu padrão */
+                flex-direction: column;
+                position: absolute;
+                top: 100%; left: 0; width: 100%;
+                background: var(--al-white);
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                border-bottom: 5px solid var(--al-red);
+            }
+
+            nav.active { display: flex; } /* Classe acionada pelo JS */
+            
+            .search-box { grid-template-columns: 1fr; width: 90%; margin-top: -30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">TALENTOS <span>ALAGOAS</span></div>
+        
+        <!-- Botão Hambúrguer para Mobile -->
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav id="nav-menu">
+            <a href="#inicio">INÍCIO</a>
+            <a href="#como-funciona">COMO FUNCIONA</a>
+            <a href="#setores">EIXOS SETORIAIS</a>
+            <a href="#talentos">PROFISSIONAIS</a>
+            <a href="#perfil" style="color: var(--al-red)">CADASTRAR PERFIL</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+        <h1>O TALENTO DO <span>INTERIOR</span> <br>VALORIZADO COMO NUNCA.</h1>
+        <p>Priorizamos o desenvolvimento regional conectando profissionais autônomos aos contratantes de seus próprios municípios. Fortalecendo a economia local, de Delmiro a Penedo.</p>
+        <a href="#como-funciona" class="btn-cta">APRENDA COMO USAR</a>
+    </section>
+
+    <!-- FORMULÁRIO DE BUSCA: Interface para o módulo Search -->
+    <div class="search-box">
+        <input type="text" placeholder="Qual serviço você precisa?">
+        <select>
+            <option disabled selected>Selecione seu Município</option>
+            <option>Delmiro Gouveia</option>
+            <option>Santana do Ipanema</option>
+            <option>Penedo</option>
+            <option>Palmeira dos Índios</option>
+            <option>Arapiraca</option>
+            <option>Maceió</option>
+        </select>
+        <select>
+            <option>Todas as Categorias</option>
+            <option>Produção Rural e Artesanato</option>
+            <option>Construção e Reformas</option>
+            <option>Serviços Domésticos</option>
+            <option>Logística e Fretes</option>
+        </select>
+        <button class="btn-cta" style="padding: 10px; border: none; cursor: pointer; box-shadow: none;">BUSCAR</button>
+    </div>
+
+    <!-- SEÇÃO DIDÁTICA: Passo a passo focado no trabalhador do interior -->
+    <section class="section" id="como-funciona">
+        <h2 style="font-family: Montserrat; color: var(--al-blue);">COMO FUNCIONA? É MUITO SIMPLES!</h2>
+        <p style="max-width: 700px; margin: 0 auto;">Criamos um sistema fácil para que todo trabalhador de Alagoas consiga mostrar seu talento para a vizinhança e para o estado.</p>
+        
+        <div class="tutorial-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Crie sua Conta</h3>
+                <p style="font-size: 14px; color: #666;">Coloque seu nome, telefone e a cidade onde você mora. É rápido e de graça para começar.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Diga o que faz</h3>
+                <p style="font-size: 14px; color: #666;">Escreva do seu jeito. Nossa Inteligência Artificial vai ajudar a organizar suas palavras para atrair clientes.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Seja Encontrado</h3>
+                <p style="font-size: 14px; color: #666;">Quando alguém da sua cidade buscar por um serviço, você aparecerá nos primeiros lugares da lista.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <h3>Combine Tudo</h3>
+                <p style="font-size: 14px; color: #666;">O cliente clica e fala direto no seu WhatsApp. Você negocia o preço e o prazo sem intermediários.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO AMA: Os quatro pilares do projeto integrador -->
+    <section class="section" id="setores">
+        <h2 style="font-family: Montserrat; color: var(--al-blue);">DESENVOLVIMENTO REGIONAL (AMA)</h2>
+        <p>Foco nas demandas reais das cidades do interior de Alagoas.</p>
+        <div class="grid-sectors">
+            <div class="sector-card">
+                <span style="font-size: 40px;">🚜</span>
+                <h3>Produção Rural</h3>
+                <p>Suporte direto ao pequeno produtor e serviços essenciais do campo.</p>
+            </div>
+            <div class="sector-card">
+                <span style="font-size: 40px;">🏗️</span>
+                <h3>Construção</h3>
+                <p>Mão de obra qualificada para obras, reformas e reparos em geral.</p>
+            </div>
+            <div class="sector-card">
+                <span style="font-size: 40px;">🧶</span>
+                <h3>Artesanato</h3>
+                <p>Destaque para o talento cultural e manual das nossas comunidades.</p>
+            </div>
+            <div class="sector-card">
+                <span style="font-size: 40px;">📦</span>
+                <h3>Logística</h3>
+                <p>Fretes, carretos e transporte ligando o sertão ao litoral.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LISTAGEM DE TALENTOS: Exemplo de integração visual com a API -->
+    <section class="section" id="talentos" style="background: white;">
+        <h2 style="font-family: Montserrat; color: var(--al-blue);">PROFISSIONAIS DO INTERIOR EM DESTAQUE</h2>
+        <p>Conheça os talentos que já estão movimentando a economia regional.</p>
+        <div class="talents-grid">
+            
+            <div class="card">
+                <div class="card-local">📍 LOCAL (DELMIRO GOUVEIA)</div>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1541933022144-50916909673c?auto=format&fit=crop&q=80&w=400');"></div>
+                <div class="card-body">
+                    <h3>José Oliveira</h3>
+                    <p><strong>Mestre de Obras e Reformas</strong></p>
+                    <p class="rating">⭐⭐⭐⭐⭐ 4.9</p>
+                    <p>Especialista em construções residenciais com foco em sustentabilidade e materiais locais no sertão.</p>
+                    <a href="#" style="text-decoration: none; color: var(--al-red); font-weight: bold;">VER PERFIL →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-local">📍 LOCAL (SANTANA DO IPANEMA)</div>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=400');"></div>
+                <div class="card-body">
+                    <h3>Maria das Dores</h3>
+                    <p><strong>Artesã e Costureira Profissional</strong></p>
+                    <p class="rating">⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>Referência em bordados manuais e confecção de peças exclusivas sob medida.</p>
+                    <a href="#" style="text-decoration: none; color: var(--al-red); font-weight: bold;">VER PERFIL →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-local">📍 LOCAL (PENEDO)</div>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1605152276897-4f618f831968?auto=format&fit=crop&q=80&w=400');"></div>
+                <div class="card-body">
+                    <h3>Wilson Santos</h3>
+                    <p><strong>Logística e Transportes Rápidos</strong></p>
+                    <p class="rating">⭐⭐⭐⭐ 4.8</p>
+                    <p>Transporte de cargas e mudanças com segurança para todo o Baixo São Francisco.</p>
+                    <a href="#" style="text-decoration: none; color: var(--al-red); font-weight: bold;">VER PERFIL →</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TECNOLOGIA: Explicação do uso de IA e Impacto Local -->
+    <section class="how-it-works">
+        <h2 style="font-family: Montserrat; color: var(--al-blue);">TECNOLOGIA A SERVIÇO DO INTERIOR</h2>
+        <div class="step-grid">
+            <div class="step">
+                <div class="step-num-icon">1</div>
+                <h3>Visibilidade Digital</h3>
+                <p>Trazemos para a internet o profissional que antes dependia apenas do boca a boca na rua.</p>
+            </div>
+            <div class="step">
+                <div class="step-num-icon">2</div>
+                <h3>Assistente de IA</h3>
+                <p>Nossa inteligência transforma rascunhos simples em perfis atraentes para o mercado atual.</p>
+            </div>
+            <div class="step">
+                <div class="step-num-icon">3</div>
+                <h3>Economia Regional</h3>
+                <p>Ao contratar localmente, você ajuda a manter a renda circulando dentro da sua própria cidade.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ: Créditos acadêmicos e institucionais -->
+    <footer>
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-family: Montserrat;">BANCO DE TALENTOS ALAGOAS</h2>
+            <p style="opacity: 0.7; max-width: 600px; margin: 0 auto; font-size: 14px;">Iniciativa para o fortalecimento da economia regional através da tecnologia e inclusão digital nos municípios alagoanos.</p>
+        </div>
+        <div style="font-size: 12px; opacity: 0.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            © 2026 - Sistemas de Informação IFAL - Campus Maceió • Projeto Integrador
+        </div>
+    </footer>
+
+    <!-- LÓGICA DO MENU HAMBÚRGUER -->
+    <script>
+        const btn = document.getElementById('hamburger');
+        const menu = document.getElementById('nav-menu');
+
+        // Abre/Fecha o menu ao clicar no botão
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+
+        // Fecha o menu automaticamente ao clicar em qualquer link (Melhor UX)
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.remove('active');
+            });
+        });
+    </script>
+
+</body>
+</html>

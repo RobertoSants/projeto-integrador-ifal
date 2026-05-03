@@ -1,6 +1,6 @@
 # Documentação de UX/UI - Banco de Talentos
 
-## Guia de Estilo (Proposta)
+## 🎨 Guia de Estilo (Proposta)
 - **Cores:** Azul Institucional (Confiança) e Verde (Aprovação/Sucesso).
 - **Tipografia:** Sem serifa (Ex: Roboto ou Inter) para facilitar a leitura digital.
 
