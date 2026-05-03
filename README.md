@@ -5,9 +5,9 @@ Professor: Leonardo Melo de Medeiros
 
 ### Equipe e Funções:
 - Roberto dos Santos: Lider Técnico, Gerente de Projeto e Engenheiro de Qualidade
+- João Victhor: Desenvolvedor Backend
 - Wallex Kaua: Desenvolvedor Front-end
 - Thiago Luiz: Desenvolvedor Front-end
-- João Victhor: Desenvolvedor Backend
 - Leonardo Ferro: Banco de Dados
 - Marcelo Feitoza: Desenvolvedor de IA (NLP)
 - Joberval Magalhães: Tester / QA
@@ -15,9 +15,11 @@ Professor: Leonardo Melo de Medeiros
 ---
 
 ### O Projeto
-Plataforma de impacto social voltada para a visibilidade de trabalhadores informais, utilizando Inteligencia Artificial para otimizacao de perfis profissionais e geracao de renda local.
+Plataforma de impacto social voltada para a visibilidade de trabalhadores informais, utilizando Inteligência Artificial para otimização de perfis profissionais e geração de renda local, com foco especial no fortalecimento dos municípios do interior de Alagoas.
 
 ### Tecnologias e Metodologia:
-* Metodologia: Agil (Scrum/Kanban)
-* Versionamento: Git Flow (Branches, Pull Requests e Issues)
-* Arquitetura: Cliente-Servidor (API REST)
+* **Metodologia:** Ágil (Scrum/Kanban).
+* **Versionamento:** Git Flow (Pull Requests e Issues).
+* **Arquitetura:** Cliente-Servidor (API REST).
+* **Interface:** Prototipagem funcional Mobile-First em HTML5 e CSS3 com identidade visual regionalista.
+* **Inteligência Artificial:** Processamento de Linguagem Natural (NLP) para profissionalização de biografias.
