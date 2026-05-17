@@ -11,7 +11,7 @@ class WorkerListCreateView(APIView):
 
     def get(self, request):
         workers = Worker.objects.all()
-        serializer = WorkerListSerializer(workers, many=True)
+        serializer = WorkerListSerializer(workers, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
@@ -35,7 +35,7 @@ class WorkerDetailView(APIView):
         worker = self.get_object(pk)
         if not worker:
             return Response({"error": "Trabalhador não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-        return Response(WorkerDetailSerializer(worker).data)
+        return Response(WorkerDetailSerializer(worker, context={"request": request}).data)
 
     def put(self, request, pk):
         worker = self.get_object(pk)

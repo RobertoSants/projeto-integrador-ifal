@@ -13,7 +13,7 @@ class Worker(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=2)
     photo = models.ImageField(upload_to="fotos/", blank=True, null=True)
-    services = models.ManyToManyField(ServiceCategory, blank=True)
+    services = models.ManyToManyField(ServiceCategory, blank=True, related_name="workers")
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property

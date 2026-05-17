@@ -4,12 +4,15 @@ from services.serializers import ServiceCategorySerializer
 
 
 class WorkerListSerializer(serializers.ModelSerializer):
+    # Lê avg_rating da anotação do banco (Avg); fallback para a property do model
+    avg_rating = serializers.FloatField(read_only=True)
     services = serializers.StringRelatedField(many=True)
     is_local = serializers.SerializerMethodField()
+    photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Worker
-        fields = ["id", "full_name", "city", "state", "phone", "avg_rating", "services", "is_local"]
+        fields = ["id", "full_name", "city", "state", "phone", "avg_rating", "services", "is_local", "photo_url"]
 
     def get_is_local(self, obj):
         contratante_city = self.context.get("contratante_city")
@@ -17,17 +20,34 @@ class WorkerListSerializer(serializers.ModelSerializer):
             return obj.city.lower() == contratante_city.lower()
         return False
 
+    def get_photo_url(self, obj):
+        if not obj.photo:
+            return None
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(obj.photo.url)
+        return obj.photo.url
+
 
 class WorkerDetailSerializer(serializers.ModelSerializer):
     services = ServiceCategorySerializer(many=True, read_only=True)
+    photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Worker
         fields = [
             "id", "user", "full_name", "bio", "phone",
-            "city", "state", "photo", "services",
+            "city", "state", "photo", "photo_url", "services",
             "avg_rating", "created_at",
         ]
+
+    def get_photo_url(self, obj):
+        if not obj.photo:
+            return None
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(obj.photo.url)
+        return obj.photo.url
 
 
 class WorkerCreateSerializer(serializers.ModelSerializer):

@@ -29,6 +29,6 @@ class ServiceWorkersView(APIView):
             return Response({"error": "Categoria não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
         from workers.serializers import WorkerListSerializer
-        workers = category.worker_set.all()
+        workers = category.workers.all()
         serializer = WorkerListSerializer(workers, many=True)
         return Response(serializer.data)

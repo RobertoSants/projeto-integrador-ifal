@@ -3,10 +3,12 @@ from .models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(source="author.username", read_only=True)
+
     class Meta:
         model = Review
-        fields = ["id", "worker", "author", "rating", "comment", "created_at"]
-        read_only_fields = ["author", "created_at"]
+        fields = ["id", "worker", "author", "author_username", "rating", "comment", "created_at"]
+        read_only_fields = ["author", "author_username", "created_at"]
 
     def validate_rating(self, value):
         if not 1 <= value <= 5:
