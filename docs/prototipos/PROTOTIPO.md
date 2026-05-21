@@ -13,11 +13,11 @@ A interface traduz visualmente a lógica de programação estabelecida no `ENDPO
 1. **Mobile-First & Navegação:** Prioridade total para dispositivos móveis com a implementação de um **Menu Hambúrguer** funcional, garantindo que a navegação seja intuitiva em smartphones.
 2. **Didática Simplificada:** Inclusão de uma seção "Como Funciona" em 4 passos com linguagem humana ("Diga o que faz", "Combine tudo no WhatsApp") para reduzir a barreira de entrada de usuários com baixo letramento digital.
 3. **Integração com IA (NLP):** O design prevê o suporte assistido para a criação da "Bio", onde a inteligência artificial transforma rascunhos informais em perfis profissionais atraentes.
-4. **Elementos Visuais:** 
-   - Uso da fonte *Montserrat* para títulos (autoridade) e *Inter* para textos (legibilidade).
+4. **Elementos Visuais:** - Uso da fonte *Montserrat* para títulos (autoridade) e *Inter* para textos (legibilidade).
    - Badges de destaque "📍 LOCAL" para promover a retenção de renda no município.
 
 ## Especificações do Protótipo
 - **Tecnologias:** HTML5, CSS3 (Flexbox/Grid) e JavaScript (Lógica de Menu).
 - **Responsividade:** Suporte completo para Desktop, Tablet e Mobile através de Media Queries.
 - **Identidade:** Estética baseada em Landing Page, adaptada para a paleta tricolor alagoana e fundo temático regional.
+- **Prazo de Entrega Final:** Todo o projeto completo deve ser consolidado e entregue até o dia 02/06/2026.
