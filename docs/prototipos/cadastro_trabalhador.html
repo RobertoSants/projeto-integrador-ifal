@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Profissional - Alagoas Regional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        /* CONFIGURAÇÃO DE CORES: Mantendo a identidade tricolor oficial */
+        :root {
+            --al-blue: #003399;
+            --al-red: #d32f2f;
+            --al-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --text-main: #2d3436;
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); }
+
+        /* CABEÇALHO CONVENCIADO */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 8%; background: var(--al-white);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--al-blue);
+        }
+
+        .logo { font-family: 'Montserrat', sans-serif; font-size: 22px; color: var(--al-blue); font-weight: 800; }
+        .logo span { color: var(--al-red); }
+
+        nav a { text-decoration: none; color: var(--al-blue); font-size: 14px; font-weight: 700; }
+
+        /* CONTAINER DO FORMULÁRIO */
+        .container { max-width: 700px; margin: 50px auto; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 6px solid var(--al-red); }
+        
+        h1 { font-family: 'Montserrat', sans-serif; color: var(--al-blue); margin-top: 0; font-size: 28px; }
+        p.subtitle { color: #666; margin-bottom: 30px; font-size: 15px; }
+
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        label { font-weight: 600; font-size: 14px; color: var(--al-blue); }
+        
+        input[type="text"], input[type="tel"], select, textarea {
+            padding: 14px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; font-family: 'Inter', sans-serif;
+        }
+
+        /* CONTAINER DA INTELIGÊNCIA ARTIFICIAL */
+        .ai-container { background: #f0f4ff; border: 1px dashed var(--al-blue); padding: 20px; border-radius: 6px; margin-top: 10px; }
+        .ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .ai-title { font-weight: 700; color: var(--al-blue); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        
+        .btn-ai { background: var(--al-blue); color: white; border: none; padding: 8px 16px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .btn-ai:hover { background: #002266; }
+
+        .ai-preview { background: white; border: 1px solid #ced4da; padding: 12px; min-height: 60px; border-radius: 4px; font-size: 14px; color: #495057; line-height: 1.5; display: none; }
+
+        .btn-submit { background: var(--al-red); color: white; padding: 16px; border: none; border-radius: 4px; font-weight: 800; font-size: 16px; width: 100%; cursor: pointer; box-shadow: 0 4px 0 #9e2020; margin-top: 20px; }
+        .btn-submit:hover { transform: translateY(1px); box-shadow: 0 3px 0 #9e2020; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">TALENTOS <span>ALAGOAS</span></div>
+        <nav><a href="prototipo_visual.html">← VOLTAR PARA O INÍCIO</a></nav>
+    </header>
+
+    <div class="container">
+        <h1>Anuncie seu Trabalho</h1>
+        <p class="subtitle">Preencha seus dados de forma simples para começar a receber propostas direto no seu celular.</p>
+
+        <form onsubmit="return false;">
+            <div class="form-group">
+                <label for="name">Nome Completo</label>
+                <input type="text" id="name" placeholder="Ex: José Oliveira da Silva" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Telefone / WhatsApp</label>
+                <input type="tel" id="phone" placeholder="Ex: 82999990000" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city">Seu Município de Atuação</label>
+                <select id="city" required>
+                    <option value="" disabled selected>Escolha sua cidade...</option>
+                    <option>Delmiro Gouveia</option>
+                    <option>Santana do Ipanema</option>
+                    <option>Penedo</option>
+                    <option>Palmeira dos Índios</option>
+                    <option>Arapiraca</option>
+                    <option>Maceió</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="service">Eixo Setorial Principal</label>
+                <select id="service" required>
+                    <option value="" disabled selected>Selecione sua categoria...</option>
+                    <option value="1">Produção Rural (Trabalhos do campo e lavoura)</option>
+                    <option value="2">Construção (Pedreiro, pintor, eletricista)</option>
+                    <option value="3">Artesanato (Trabalhos manuais e costura)</option>
+                    <option value="4">Logística (Fretes, carretos e entregas)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="raw-bio">Fale um pouco sobre o que você sabe fazer</label>
+                <textarea id="raw-bio" rows="4" placeholder="Escreva do seu jeito. Ex: Faço serviço de pedreiro, bato laje e sei pintar parede. Trabalho em Penedo." required></textarea>
+                
+                <div class="ai-container">
+                    <div class="ai-header">
+                        <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                        <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+                    </div>
+                    <div class="ai-preview" id="ai-preview"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">CONFIRMAR E CADASTRAR PERFIL</button>
+        </form>
+    </div>
+
+    <script>
+        const btnOptimize = document.getElementById('btn-optimize');
+        const rawBio = document.getElementById('raw-bio');
+        const aiPreview = document.getElementById('ai-preview');
+
+        btnOptimize.addEventListener('click', () => {
+            if (!rawBio.value.trim()) {
+                alert('Por favor, escreva alguma frase antes para que a IA possa ajudar.');
+                return;
+            }
+
+            btnOptimize.innerText = 'Processando...';
+
+            // Simulação de delay de requisição do motor de NLP
+            setTimeout(() => {
+                aiPreview.innerHTML = `<strong>✨ Biografia Profissional Otimizada:</strong><br>Profissional dedicado com competências sólidas no setor de Construção e Reformas. Especializado na execução de estruturas de alvenaria, concretagem de lajes e acabamentos de pintura residencial. Atuação voltada ao atendimento ágil e de alta confiabilidade no município de Penedo e regiões circunvizinhas.`;
+                aiPreview.style.display = 'block';
+                btnOptimize.innerText = 'Texto Atualizado!';
+            }, 1200);
+        });
+    </script>
+</body>
+</html>
