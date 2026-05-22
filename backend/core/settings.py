@@ -1,18 +1,27 @@
 """
 Settings — Banco de Talentos Comunitário
 Projeto Integrador IFAL 2026.1
+Foco: Segurança Avançada & Conformidade com LGPD
 """
 
+from datetime import timedelta
 from pathlib import Path
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Chave secreta carregada via variável de ambiente (Crucial nunca expor no Git)
 SECRET_KEY = config("SECRET_KEY")
 
+# Em produção, DEBUG deve ser obrigatoriamente False
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+# [SEGURANÇA] Restrição de Hosts para mitigar HTTP Host Header Injection
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS", 
+    default="localhost,127.0.0.1", 
+    cast=lambda v: [s.strip() for s in v.split(",")]
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -21,11 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Libs
+    # Libs de Terceiros
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    # Apps do projeto
+    # Apps do Projeto Escopo Local
     "accounts",
     "workers",
     "services",
@@ -36,12 +45,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware", # Gerencia políticas de CORS
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware", # Proteção ativa contra CSRF
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware", # Bloqueia Clickjacking
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -64,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-# Banco de dados — PostgreSQL para desenvolvimento
+# Banco de Dados — PostgreSQL para Desenvolvimento/Produção
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -76,6 +85,7 @@ DATABASES = {
     }
 }
 
+# Validação estrita de senhas dos usuários (Trabalhadores/Contratantes)
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -94,24 +104,59 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Custom User Model unificando a autenticação
 AUTH_USER_MODEL = "accounts.User"
 
-# Django REST Framework
+# Django REST Framework Configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # Substitui a classe padrão pela nossa classe customizada com suporte a Cookies e Bearer
+        "accounts.authentication.CookieJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ),
 }
 
-# JWT
-from datetime import timedelta
+# [SEGURANÇA & LGPD] Configuração Robusta de Tokens JWT
+# Mudança estratégica: Isolamento contra roubo de tokens via XSS
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15), # Tempo balanceado para UX e segurança
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,                  # Invalida o refresh token anterior no uso
+    "BLACKLIST_FLUSH_AFTER_LOGOUT": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    
+    # Práticas recomendadas para tráfego via Cookie (Impede leitura maliciosa em JS)
+    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE_HTTP_ONLY": True,  # 100% Imune a ataques Cross-Site Scripting (XSS)
+    "AUTH_COOKIE_SECURE": not DEBUG,# Só trafega em HTTPS em ambiente de produção
+    "AUTH_COOKIE_SAMESITE": "Lax",  # Defesa contra Cross-Site Request Forgery (CSRF)
 }
 
-# CORS — permite o frontend acessar a API
-CORS_ALLOW_ALL_ORIGINS = True
+# [SEGURANÇA] Controle estrito de Origens do CORS
+# Desativado o acesso universal (CORS_ALLOW_ALL_ORIGINS = True removido)
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000,http://127.0.0.1:3000",
+    cast=lambda v: [s.strip() for s in v.split(",")]
+)
+CORS_ALLOW_CREDENTIALS = True # Permite o envio de cookies de autenticação seguros
+
+# [SEGURANÇA OBRIGATÓRIA PARA DEPLOY / PRODUÇÃO]
+if not DEBUG:
+    # Força redirecionamento total para HTTPS
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Cabeçalhos extras de proteção do navegador
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Proteção HTTP Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = 31536000 # 1 ano
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True

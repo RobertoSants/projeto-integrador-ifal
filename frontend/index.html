@@ -75,7 +75,7 @@
             document.getElementById('nav-menu').classList.toggle('active');
         });
 
-        // Consumo Assíncrono da API REST do Django
+        // Consumo Assíncrono da API REST (Incluído credentials para tráfego seguro de cookies)
         async function fetchWorkers() {
             const query = document.getElementById("search-input").value;
             const city = document.getElementById("city-select").value;
@@ -89,7 +89,8 @@
             if (activeCategory) url.searchParams.append("service", activeCategory);
 
             try {
-                const response = await fetch(url);
+                // Adicionado credentials: "include" para permitir que cookies seguros HttpOnly transitem
+                const response = await fetch(url, { credentials: "include" });
                 const data = await response.json();
                 renderCards(data.results, data.contratante_city);
             } catch (error) {

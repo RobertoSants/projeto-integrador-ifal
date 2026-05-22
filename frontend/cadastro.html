@@ -19,61 +19,77 @@
         <p class="subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
 
         <form id="register-form">
-            <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
-            <div class="form-group">
-                <label for="username">Nome de Usuário (Login)</label>
-                <input type="text" id="username" placeholder="Ex: jose_oliveira" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" required>
+            <div id="step-1" class="form-step">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
+                <div class="form-group">
+                    <label for="username">Nome de Usuário (Login)</label>
+                    <input type="text" id="username" placeholder="Ex: jose_oliveira" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                
+                <div class="form-group" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 20px;">
+                    <input type="checkbox" id="consentimento" required style="margin-top: 4px; cursor: pointer;">
+                    <label for="consentimento" style="font-size: 13px; color: #555; cursor: pointer; line-height: 1.4;">
+                        Autorizo o processamento dos meus dados cadastrais e profissionais para fins de visibilidade e geração de renda na plataforma, em estrita conformidade com as diretrizes da LGPD.
+                    </label>
+                </div>
+
+                <button type="button" class="btn-cta" id="btn-next-step" style="width: 100%; border: none; text-align: center; margin-top: 20px;">AVANÇAR PARA PERFIL PROFISSIONAL →</button>
             </div>
 
-            <h3 style="margin-top:40px; color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 2: Perfil Profissional</h3>
-            <div class="form-group">
-                <label for="name">Nome Completo</label>
-                <input type="text" id="name" placeholder="Ex: José Oliveira da Silva" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Telefone / WhatsApp</label>
-                <input type="tel" id="phone" placeholder="Ex: 82999990000" required>
-            </div>
-            <div class="form-group">
-                <label for="city">Seu Município de Atuação</label>
-                <select id="city" required>
-                    <option value="" disabled selected>Escolha sua cidade...</option>
-                    <option value="Delmiro Gouveia">Delmiro Gouveia</option>
-                    <option value="Santana do Ipanema">Santana do Ipanema</option>
-                    <option value="Penedo">Penedo</option>
-                    <option value="Palmeira dos Índios">Palmeira dos Índios</option>
-                    <option value="Arapiraca">Arapiraca</option>
-                    <option value="Maceió">Maceió</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="service">Eixo Setorial Principal</label>
-                <select id="service" required>
-                    <option value="" disabled selected>Selecione sua categoria...</option>
-                    <option value="1">Produção Rural</option>
-                    <option value="2">Construção</option>
-                    <option value="3">Artesanato</option>
-                    <option value="4">Logística</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
-                <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo." required></textarea>
-                
-                <div class="ai-container">
-                    <div class="ai-header">
-                        <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
-                        <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+            <div id="step-2" class="form-step" style="display: none;">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 2: Perfil Profissional</h3>
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" placeholder="Ex: José Oliveira da Silva">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone / WhatsApp</label>
+                    <input type="tel" id="phone" placeholder="Ex: 82999990000">
+                </div>
+                <div class="form-group">
+                    <label for="city">Seu Município de Atuação</label>
+                    <select id="city">
+                        <option value="" disabled selected>Escolha sua cidade...</option>
+                        <option value="Delmiro Gouveia">Delmiro Gouveia</option>
+                        <option value="Santana do Ipanema">Santana do Ipanema</option>
+                        <option value="Penedo">Penedo</option>
+                        <option value="Palmeira dos Índios">Palmeira dos Índios</option>
+                        <option value="Arapiraca">Arapiraca</option>
+                        <option value="Maceió">Maceió</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="service">Eixo Setorial Principal</label>
+                    <select id="service">
+                        <option value="" disabled selected>Selecione sua categoria...</option>
+                        <option value="1">Produção Rural</option>
+                        <option value="2">Construção</option>
+                        <option value="3">Artesanato</option>
+                        <option value="4">Logística</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
+                    <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo."></textarea>
+                    
+                    <div class="ai-container">
+                        <div class="ai-header">
+                            <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                            <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+                        </div>
+                        <div class="ai-preview" id="ai-preview"></div>
                     </div>
-                    <div class="ai-preview" id="ai-preview"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-cta" id="btn-prev-step" style="background: #666; width: 40%; border: none; text-align: center;">← VOLTAR</button>
+                    <button type="submit" class="btn-cta" style="width: 60%; border: none; text-align: center;">CONFIRMAR E PUBLICAR</button>
                 </div>
             </div>
-
-            <button type="submit" class="btn-cta" style="width: 100%; border: none; text-align: center; margin-top: 20px;">CONFIRMAR E CADASTRAR PERFIL</button>
         </form>
     </div>
 
@@ -81,9 +97,55 @@
         const btnOptimize = document.getElementById('btn-optimize');
         const rawBio = document.getElementById('raw-bio');
         const aiPreview = document.getElementById('ai-preview');
+        
+        // Elementos de Controle de Etapas do Formulário Profissional
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const btnNextStep = document.getElementById('btn-next-step');
+        const btnPrevStep = document.getElementById('btn-prev-step');
+        
         let finalBio = "";
 
-        // Chamada assíncrona para o endpoint Mock de IA do Marcelo
+        // Controle do Fluxo de Telas (Passo 1 para Passo 2 com Validação)
+        btnNextStep.addEventListener('click', () => {
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+            const consentimentoInput = document.getElementById("consentimento");
+
+            if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+                alert("Por favor, preencha os dados da conta de acesso.");
+                return;
+            }
+            if (!consentimentoInput.checked) {
+                alert("É obrigatório autorizar o processamento de dados sob a LGPD para continuar.");
+                return;
+            }
+
+            // Ativa os campos obrigatórios do Passo 2 dinamicamente
+            document.getElementById("name").required = true;
+            document.getElementById("phone").required = true;
+            document.getElementById("city").required = true;
+            document.getElementById("service").required = true;
+            document.getElementById("raw-bio").required = true;
+
+            // Transição visual limpa
+            step1.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        btnPrevStep.addEventListener('click', () => {
+            // Remove obrigatoriedade ao voltar para não travar a navegação interna
+            document.getElementById("name").required = false;
+            document.getElementById("phone").required = false;
+            document.getElementById("city").required = false;
+            document.getElementById("service").required = false;
+            document.getElementById("raw-bio").required = false;
+
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+
+        // Chamada assíncrona para o endpoint Mock de IA do Marcelo (Suporte a Cookies incluído)
         btnOptimize.addEventListener('click', async () => {
             if (!rawBio.value.trim()) {
                 alert('Escreva algo para que a IA possa otimizar.');
@@ -107,36 +169,42 @@
             }
         });
 
-        // Submissão encadeada (Cria Usuário -> Faz Login -> Salva Worker com Token JWT)
+        // Submissão Segura Encadeada baseada em Cookies Nativos (Sem armazenamento local de Tokens)
         document.getElementById("register-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
             const city = document.getElementById("city").value;
+            const consentimento = document.getElementById("consentimento").checked;
 
-            // 1. Cadastro da conta base
+            // 1. Cadastro da conta base (Envia flag LGPD)
             const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, password_confirm: password, city, state: "AL" })
+                body: JSON.stringify({ username, password, password_confirm: password, city, state: "AL", consentimento })
             });
 
-            if (!regRes.ok) { alert("Erro ao criar conta de usuário."); return; }
+            if (!regRes.ok) { 
+                const errData = await regRes.json();
+                alert(`Erro ao criar conta de usuário: ${errData.error || 'Verifique os dados.'}`); 
+                return; 
+            }
 
-            // 2. Autenticação automática para capturar o Bearer Token
+            // 2. Autenticação automática — O backend injetará os Cookies HttpOnly na resposta
             const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
             });
-            const tokens = await loginRes.json();
 
-            // 3. Criação do perfil do trabalhador associado à conta
+            if (!loginRes.ok) { alert("Erro de autenticação automática."); return; }
+
+            // 3. Criação do perfil do trabalhador — credentials: "include" anexa o cookie automaticamente
             const workerRes = await fetch("http://localhost:8000/api/workers/", {
                 method: "POST",
+                credentials: "include", 
                 headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${tokens.access}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     full_name: document.getElementById("name").value,
@@ -152,7 +220,7 @@
                 alert("Perfil profissional publicado com sucesso no Banco de Talentos!");
                 window.location.href = "index.html";
             } else {
-                alert("Erro ao publicar perfil.");
+                alert("Erro ao publicar perfil profissional. Sessão expirada ou inválida.");
             }
         });
     </script>
