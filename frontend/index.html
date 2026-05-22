@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Talentos - Alagoas Regional (AMA)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">TALENTOS <span>ALAGOAS</span></div>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
+            <a href="#inicio">INÍCIO</a>
+            <a href="#setores">EIXOS SETORIAIS</a>
+            <a href="#talentos">PROFISSIONAIS</a>
+            <a href="cadastro.html" style="color: var(--cor-al-red-primary)">CADASTRAR PERFIL</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+        <h1>O TALENTO DO <span>INTERIOR</span> <br>VALORIZADO COMO NUNCA.</h1>
+        <p>Priorizamos o desenvolvimento regional conectando profissionais autônomos aos contratantes de seus próprios municípios. Fortalecendo a economia local, de Delmiro a Penedo.</p>
+        <a href="#talentos" class="btn-cta">BUSCAR AGORA</a>
+    </section>
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Qual serviço você precisa?">
+        <select id="city-select">
+            <option value="">Selecione seu Município</option>
+            <option value="Delmiro Gouveia">Delmiro Gouveia</option>
+            <option value="Santana do Ipanema">Santana do Ipanema</option>
+            <option value="Penedo">Penedo</option>
+            <option value="Palmeira dos Índios">Palmeira dos Índios</option>
+            <option value="Arapiraca">Arapiraca</option>
+            <option value="Maceió">Maceió</option>
+        </select>
+        <button class="btn-cta" id="search-button" style="padding: 10px; border: none; box-shadow: none;">BUSCAR</button>
+    </div>
+
+    <section class="section" id="setores">
+        <h2>DESENVOLVIMENTO REGIONAL (AMA)</h2>
+        <p>Foco nas demandas reais das cidades do interior de Alagoas.</p>
+        <div class="grid-sectors">
+            <div class="sector-card" data-service-id="1"><span>🚜</span><h3>Produção Rural</h3></div>
+            <div class="sector-card" data-service-id="2"><span>🏗️</span><h3>Construção</h3></div>
+            <div class="sector-card" data-service-id="3"><span>🧶</span><h3>Artesanato</h3></div>
+            <div class="sector-card" data-service-id="4"><span>📦</span><h3>Logística</h3></div>
+        </div>
+    </section>
+
+    <section class="section" id="talentos" style="background: white;">
+        <h2>PROFISSIONAIS DO INTERIOR EM DESTAQUE</h2>
+        <p id="results-count">Carregando talentos regionais...</p>
+        <div class="talents-grid" id="talents-container"></div>
+    </section>
+
+    <footer>
+        <h2>BANCO DE TALENTOS ALAGOAS</h2>
+        <p>© 2026 - Sistemas de Informação IFAL - Campus Maceió • Projeto Integrador</p>
+    </footer>
+
+    <script>
+        const API_BASE = "http://localhost:8000/api/search/";
+        const container = document.getElementById("talents-container");
+        const countTxt = document.getElementById("results-count");
+        let activeCategory = null;
+
+        // Controle do Menu Hambúrguer (Responsividade Mobile)
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-menu').classList.toggle('active');
+        });
+
+        // Consumo Assíncrono da API REST do Django
+        async function fetchWorkers() {
+            const query = document.getElementById("search-input").value;
+            const city = document.getElementById("city-select").value;
+            
+            let url = new URL(API_BASE);
+            if (query) url.searchParams.append("q", query);
+            if (city) {
+                url.searchParams.append("city", city);
+                url.searchParams.append("contratante_city", city);
+            }
+            if (activeCategory) url.searchParams.append("service", activeCategory);
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                renderCards(data.results, data.contratante_city);
+            } catch (error) {
+                countTxt.innerText = "Erro ao conectar com o servidor backend.";
+            }
+        }
+
+        // Renderização Dinâmica dos Cards baseada no JSON de Resposta
+        function renderCards(workers, currentCity) {
+            container.innerHTML = "";
+            countTxt.innerText = `${workers.length} profissionais encontrados ${currentCity ? `próximos a ${currentCity}` : ''}`;
+            
+            if(workers.length === 0) {
+                container.innerHTML = "<p style='grid-column: 1/-1; color: #666; text-align: center;'>Nenhum trabalhador cadastrado atende aos filtros selecionados.</p>";
+                return;
+            }
+
+            workers.forEach(w => {
+                const defaultImg = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400";
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    ${w.is_local ? `<div class="card-local">📍 LOCAL (${w.city.toUpperCase()})</div>` : `<div class="card-local" style="background:#666;">📍 ${w.city.toUpperCase()}</div>`}
+                    <div class="card-img" style="background-image: url('${w.photo_url ? w.photo_url : defaultImg}')"></div>
+                    <div class="card-body">
+                        <h3>${w.full_name}</h3>
+                        <p><strong>${w.services.join(', ') || 'Autônomo'}</strong></p>
+                        <p class="rating">⭐⭐⭐⭐⭐ ${w.avg_rating || '5.0'}</p>
+                        <a href="https://wa.me/${w.phone}" target="_blank" class="btn-cta" style="padding:10px; font-size:12px; text-align:center; display:block; margin-top:15px; box-shadow:none;">CONTACTAR VIA WHATSAPP</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Ouvintes de Eventos (Inputs, Botão e Filtros por Eixo)
+        document.getElementById("search-button").addEventListener("click", fetchWorkers);
+        document.querySelectorAll(".sector-card").forEach(card => {
+            card.addEventListener("click", function() {
+                const id = this.getAttribute("data-service-id");
+                if (activeCategory === id) {
+                    activeCategory = null;
+                    this.classList.remove("active");
+                } else {
+                    document.querySelectorAll(".sector-card").forEach(c => c.classList.remove("active"));
+                    activeCategory = id;
+                    this.classList.add("active");
+                }
+                fetchWorkers();
+            });
+        });
+
+        // Execução Inicial automática ao carregar a página
+        fetchWorkers();
+    </script>
+</body>
+</html>

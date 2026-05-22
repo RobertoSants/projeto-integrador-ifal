@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Profissional - Alagoas Regional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">TALENTOS <span>ALAGOAS</span></div>
+        <nav><a href="index.html">← VOLTAR PARA O INÍCIO</a></nav>
+    </header>
+
+    <div class="container">
+        <h1>Anuncie seu Trabalho</h1>
+        <p class="subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
+
+        <form id="register-form">
+            <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
+            <div class="form-group">
+                <label for="username">Nome de Usuário (Login)</label>
+                <input type="text" id="username" placeholder="Ex: jose_oliveira" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <h3 style="margin-top:40px; color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 2: Perfil Profissional</h3>
+            <div class="form-group">
+                <label for="name">Nome Completo</label>
+                <input type="text" id="name" placeholder="Ex: José Oliveira da Silva" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Telefone / WhatsApp</label>
+                <input type="tel" id="phone" placeholder="Ex: 82999990000" required>
+            </div>
+            <div class="form-group">
+                <label for="city">Seu Município de Atuação</label>
+                <select id="city" required>
+                    <option value="" disabled selected>Escolha sua cidade...</option>
+                    <option value="Delmiro Gouveia">Delmiro Gouveia</option>
+                    <option value="Santana do Ipanema">Santana do Ipanema</option>
+                    <option value="Penedo">Penedo</option>
+                    <option value="Palmeira dos Índios">Palmeira dos Índios</option>
+                    <option value="Arapiraca">Arapiraca</option>
+                    <option value="Maceió">Maceió</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="service">Eixo Setorial Principal</label>
+                <select id="service" required>
+                    <option value="" disabled selected>Selecione sua categoria...</option>
+                    <option value="1">Produção Rural</option>
+                    <option value="2">Construção</option>
+                    <option value="3">Artesanato</option>
+                    <option value="4">Logística</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
+                <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo." required></textarea>
+                
+                <div class="ai-container">
+                    <div class="ai-header">
+                        <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                        <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+                    </div>
+                    <div class="ai-preview" id="ai-preview"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-cta" style="width: 100%; border: none; text-align: center; margin-top: 20px;">CONFIRMAR E CADASTRAR PERFIL</button>
+        </form>
+    </div>
+
+    <script>
+        const btnOptimize = document.getElementById('btn-optimize');
+        const rawBio = document.getElementById('raw-bio');
+        const aiPreview = document.getElementById('ai-preview');
+        let finalBio = "";
+
+        // Chamada assíncrona para o endpoint Mock de IA do Marcelo
+        btnOptimize.addEventListener('click', async () => {
+            if (!rawBio.value.trim()) {
+                alert('Escreva algo para que a IA possa otimizar.');
+                return;
+            }
+            btnOptimize.innerText = 'Processando...';
+            
+            try {
+                const response = await fetch("http://localhost:8000/api/workers/optimize-bio/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bio: rawBio.value })
+                });
+                const data = await response.json();
+                finalBio = data.optimized_bio;
+                aiPreview.innerHTML = `<strong>✨ Biografia Profissional Otimizada:</strong><br>${finalBio}`;
+                aiPreview.style.display = 'block';
+                btnOptimize.innerText = 'Texto Otimizado!';
+            } catch (e) {
+                btnOptimize.innerText = 'Erro na IA';
+            }
+        });
+
+        // Submissão encadeada (Cria Usuário -> Faz Login -> Salva Worker com Token JWT)
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const city = document.getElementById("city").value;
+
+            // 1. Cadastro da conta base
+            const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password, password_confirm: password, city, state: "AL" })
+            });
+
+            if (!regRes.ok) { alert("Erro ao criar conta de usuário."); return; }
+
+            // 2. Autenticação automática para capturar o Bearer Token
+            const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            const tokens = await loginRes.json();
+
+            // 3. Criação do perfil do trabalhador associado à conta
+            const workerRes = await fetch("http://localhost:8000/api/workers/", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${tokens.access}`
+                },
+                body: JSON.stringify({
+                    full_name: document.getElementById("name").value,
+                    phone: document.getElementById("phone").value,
+                    city: city,
+                    state: "AL",
+                    bio: finalBio || rawBio.value,
+                    services: [parseInt(document.getElementById("service").value)]
+                })
+            });
+
+            if (workerRes.ok) {
+                alert("Perfil profissional publicado com sucesso no Banco de Talentos!");
+                window.location.href = "index.html";
+            } else {
+                alert("Erro ao publicar perfil.");
+            }
+        });
+    </script>
+</body>
+</html>

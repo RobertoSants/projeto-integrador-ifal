@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .models import Worker
 from .serializers import WorkerListSerializer, WorkerDetailSerializer, WorkerCreateSerializer
 
@@ -79,3 +79,14 @@ class WorkerReviewsView(APIView):
         from reviews.serializers import ReviewSerializer
         serializer = ReviewSerializer(worker.reviews.all(), many=True)
         return Response(serializer.data)
+
+class OptimizeBioMockView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        raw_bio = request.data.get("bio", "")
+        if not raw_bio:
+            return Response({"error": "O campo 'bio' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        optimized = f"Profissional qualificado com experiência prática em Alagoas. Especialista em serviços sob demanda, focado em eficiência, pontualidade e excelência na execução: '{raw_bio}'"
+        return Response({"optimized_bio": optimized}, status=status.HTTP_200_OK)

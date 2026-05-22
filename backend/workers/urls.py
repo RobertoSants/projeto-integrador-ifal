@@ -8,4 +8,5 @@ urlpatterns = [
     path("<int:pk>/", views.WorkerDetailView.as_view(), name="worker_detail"),
     path("<int:pk>/services/", views.WorkerServicesView.as_view(), name="worker_services"),
     path("<int:pk>/reviews/", views.WorkerReviewsView.as_view(), name="worker_reviews"),
+    path("optimize-bio/", views.OptimizeBioMockView.as_view(), name="optimize_bio_mock"),
 ]
