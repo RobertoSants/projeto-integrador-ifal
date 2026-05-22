@@ -118,32 +118,32 @@ REST_FRAMEWORK = {
     ),
 }
 
-# [SEGURANÇA & LGPD] Configuração Robusta de Tokens JWT
-# Mudança estratégica: Isolamento contra roubo de tokens via XSS
+# [SEGURANÇA & LGPD] Configuração Robusta de Tokens JWT via Cookie HttpOnly
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15), # Tempo balanceado para UX e segurança
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,                  # Invalida o refresh token anterior no uso
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_FLUSH_AFTER_LOGOUT": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     
-    # Práticas recomendadas para tráfego via Cookie (Impede leitura maliciosa em JS)
     "AUTH_COOKIE": "access_token",
-    "AUTH_COOKIE_HTTP_ONLY": True,  # 100% Imune a ataques Cross-Site Scripting (XSS)
-    "AUTH_COOKIE_SECURE": not DEBUG,# Só trafega em HTTPS em ambiente de produção
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Defesa contra Cross-Site Request Forgery (CSRF)
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS ativa
+    "AUTH_COOKIE_SECURE": False,     # OBRIGATÓRIO False para permitir tráfego local sem HTTPS
+    "AUTH_COOKIE_SAMESITE": "Lax",   # Permite o tráfego local contanto que usemos o mesmo host no navegador
 }
 
-# [SEGURANÇA] Controle estrito de Origens do CORS
-# Desativado o acesso universal (CORS_ALLOW_ALL_ORIGINS = True removido)
+# [SEGURANÇA] Controle estrito de Origens do CORS para as portas do Live Server
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = config(
-    "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:3000,http://127.0.0.1:3000",
-    cast=lambda v: [s.strip() for s in v.split(",")]
-)
-CORS_ALLOW_CREDENTIALS = True # Permite o envio de cookies de autenticação seguros
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:5501",
+    "http://127.0.0.1:5501",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True # Essencial para permitir o tráfego dos cookies HttpOnly
 
 # [SEGURANÇA OBRIGATÓRIA PARA DEPLOY / PRODUÇÃO]
 if not DEBUG:

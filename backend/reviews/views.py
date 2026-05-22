@@ -1,18 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .models import Review
 from .serializers import ReviewSerializer
 
 
 class ReviewCreateView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # Permite que o endpoint receba requisições anônimas para posts públicos
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(author=request.user)
+            # Se o usuário estiver logado, vincula a conta dele; caso contrário, salva como anônimo (None)
+            user = request.user if request.user.is_authenticated else None
+            serializer.save(author=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

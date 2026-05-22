@@ -4,7 +4,6 @@ from services.models import ServiceCategory
 
 User = get_user_model()
 
-
 class Worker(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="worker_profile")
     full_name = models.CharField(max_length=200)

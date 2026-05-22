@@ -10,28 +10,32 @@
 <body>
 
     <header>
-        <div class="logo">TALENTOS <span>ALAGOAS</span></div>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">TALENTOS <span>ALAGOAS</span></div>
         <nav><a href="index.html">← VOLTAR PARA O INÍCIO</a></nav>
     </header>
 
     <div class="container">
-        <h1>Anuncie seu Trabalho</h1>
-        <p class="subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
+        <h1 id="cadastro-title">Anuncie seu Trabalho</h1>
+        <p class="subtitle" id="cadastro-subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
 
-        <form id="register-form">
+        <form id="register-form" enctype="multipart/form-data">
             <div id="step-1" class="form-step">
                 <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
                 <div class="form-group">
                     <label for="username">Nome de Usuário (Login)</label>
-                    <input type="text" id="username" placeholder="Ex: jose_oliveira" required>
+                    <input type="text" id="username" placeholder="Ex: jose_oliveira">
                 </div>
                 <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" required>
+                    <label for="email">E-mail Pessoal</label>
+                    <input type="email" id="email" placeholder="Ex: jose.oliveira@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha de Segurança</label>
+                    <input type="password" id="password" placeholder="Mínimo de 8 caracteres contendo letras e números">
                 </div>
                 
                 <div class="form-group" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 20px;">
-                    <input type="checkbox" id="consentimento" required style="margin-top: 4px; cursor: pointer;">
+                    <input type="checkbox" id="consentimento" style="margin-top: 4px; cursor: pointer;">
                     <label for="consentimento" style="font-size: 13px; color: #555; cursor: pointer; line-height: 1.4;">
                         Autorizo o processamento dos meus dados cadastrais e profissionais para fins de visibilidade e geração de renda na plataforma, em estrita conformidade com as diretrizes da LGPD.
                     </label>
@@ -48,18 +52,12 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">Telefone / WhatsApp</label>
-                    <input type="tel" id="phone" placeholder="Ex: 82999990000">
+                    <input type="tel" id="phone" placeholder="(82) 99999-0000" maxlength="15">
                 </div>
                 <div class="form-group">
                     <label for="city">Seu Município de Atuação</label>
                     <select id="city">
                         <option value="" disabled selected>Escolha sua cidade...</option>
-                        <option value="Delmiro Gouveia">Delmiro Gouveia</option>
-                        <option value="Santana do Ipanema">Santana do Ipanema</option>
-                        <option value="Penedo">Penedo</option>
-                        <option value="Palmeira dos Índios">Palmeira dos Índios</option>
-                        <option value="Arapiraca">Arapiraca</option>
-                        <option value="Maceió">Maceió</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -72,6 +70,12 @@
                         <option value="4">Logística</option>
                     </select>
                 </div>
+                
+                <div class="form-group">
+                    <label for="photo">Sua Foto de Perfil (Opcional)</label>
+                    <input type="file" id="photo" accept="image/*" style="padding:10px 0;">
+                </div>
+
                 <div class="form-group">
                     <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
                     <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo."></textarea>
@@ -94,11 +98,57 @@
     </div>
 
     <script>
+        let isAlreadyLogged = false;
+
+        document.getElementById("phone").addEventListener("input", function(e) {
+            let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+        });
+
+        async function loadCities() {
+            try {
+                const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/AL/municipios?ordenar=nome");
+                const cities = await response.json();
+                const select = document.getElementById("city");
+                cities.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c.nome;
+                    opt.innerText = c.nome;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro ao carregar municípios", e); }
+        }
+
+        async function checkInitialSession() {
+            try {
+                const res = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
+                if (res.ok) {
+                    isAlreadyLogged = true;
+                    document.getElementById("cadastro-title").innerText = "Complete seu Perfil";
+                    document.getElementById("cadastro-subtitle").innerText = "Sua conta já está conectada. Preencha seus dados de anúncio profissional abaixo.";
+                    
+                    document.getElementById("step-1").style.display = "none";
+                    document.getElementById("step-2").style.display = "block";
+                    document.getElementById("btn-prev-step").style.display = "none";
+                    
+                    document.getElementById("name").required = true;
+                    document.getElementById("phone").required = true;
+                    document.getElementById("city").required = true;
+                    document.getElementById("service").required = true;
+                    document.getElementById("raw-bio").required = true;
+                } else {
+                    document.getElementById("username").required = true;
+                    document.getElementById("email").required = true;
+                    document.getElementById("password").required = true;
+                    document.getElementById("consentimento").required = true;
+                }
+            } catch (e) { console.log("Usuário anônimo."); }
+        }
+
         const btnOptimize = document.getElementById('btn-optimize');
         const rawBio = document.getElementById('raw-bio');
         const aiPreview = document.getElementById('ai-preview');
         
-        // Elementos de Controle de Etapas do Formulário Profissional
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
         const btnNextStep = document.getElementById('btn-next-step');
@@ -106,35 +156,44 @@
         
         let finalBio = "";
 
-        // Controle do Fluxo de Telas (Passo 1 para Passo 2 com Validação)
         btnNextStep.addEventListener('click', () => {
-            const usernameInput = document.getElementById("username");
-            const passwordInput = document.getElementById("password");
-            const consentimentoInput = document.getElementById("consentimento");
+            const userVal = document.getElementById("username").value.trim();
+            const emailVal = document.getElementById("email").value.trim();
+            const passVal = document.getElementById("password").value;
 
-            if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
-                alert("Por favor, preencha os dados da conta de acesso.");
-                return;
-            }
-            if (!consentimentoInput.checked) {
-                alert("É obrigatório autorizar o processamento de dados sob a LGPD para continuar.");
+            if (!userVal || !emailVal || !passVal) {
+                alert("Por favor, preencha todos os campos da conta de acesso.");
                 return;
             }
 
-            // Ativa os campos obrigatórios do Passo 2 dinamicamente
+            // CORREÇÃO DE VALIDAÇÃO: Expressão regular profissional para validar estrutura de e-mail antes de passar de etapa
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                alert("Por favor, insira um endereço de e-mail válido (Ex: nome@dominio.com).");
+                document.getElementById("email").focus();
+                return;
+            }
+
+            if (passVal.length < 8 || !/[A-Za-z]/.test(passVal) || !/[0-9]/.test(passVal)) {
+                alert("Sua senha está fraca. Crie uma senha com no mínimo 8 caracteres contendo letras e números.");
+                return;
+            }
+            if (!document.getElementById("consentimento").checked) {
+                alert("É obrigatório autorizar o consentimento LGPD para continuar.");
+                return;
+            }
+
             document.getElementById("name").required = true;
             document.getElementById("phone").required = true;
             document.getElementById("city").required = true;
             document.getElementById("service").required = true;
             document.getElementById("raw-bio").required = true;
 
-            // Transição visual limpa
             step1.style.display = "none";
             step2.style.display = "block";
         });
 
         btnPrevStep.addEventListener('click', () => {
-            // Remove obrigatoriedade ao voltar para não travar a navegação interna
             document.getElementById("name").required = false;
             document.getElementById("phone").required = false;
             document.getElementById("city").required = false;
@@ -145,14 +204,9 @@
             step1.style.display = "block";
         });
 
-        // Chamada assíncrona para o endpoint Mock de IA do Marcelo (Suporte a Cookies incluído)
         btnOptimize.addEventListener('click', async () => {
-            if (!rawBio.value.trim()) {
-                alert('Escreva algo para que a IA possa otimizar.');
-                return;
-            }
+            if (!rawBio.value.trim()) return;
             btnOptimize.innerText = 'Processando...';
-            
             try {
                 const response = await fetch("http://localhost:8000/api/workers/optimize-bio/", {
                     method: "POST",
@@ -161,68 +215,80 @@
                 });
                 const data = await response.json();
                 finalBio = data.optimized_bio;
-                aiPreview.innerHTML = `<strong>✨ Biografia Profissional Otimizada:</strong><br>${finalBio}`;
+                aiPreview.innerHTML = `<strong>✨ Biografia Otimizada:</strong><br>${finalBio}`;
                 aiPreview.style.display = 'block';
                 btnOptimize.innerText = 'Texto Otimizado!';
-            } catch (e) {
-                btnOptimize.innerText = 'Erro na IA';
-            }
+            } catch (e) { btnOptimize.innerText = 'Erro na IA'; }
         });
 
-        // Submissão Segura Encadeada baseada em Cookies Nativos (Sem armazenamento local de Tokens)
         document.getElementById("register-form").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+            e.stopPropagation();
+
             const city = document.getElementById("city").value;
-            const consentimento = document.getElementById("consentimento").checked;
+            const full_name = document.getElementById("name").value.trim();
 
-            // 1. Cadastro da conta base (Envia flag LGPD)
-            const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, password_confirm: password, city, state: "AL", consentimento })
-            });
+            try {
+                if (!isAlreadyLogged) {
+                    const username = document.getElementById("username").value.trim();
+                    const email = document.getElementById("email").value.trim();
+                    const password = document.getElementById("password").value;
+                    const consentimento = document.getElementById("consentimento").checked;
 
-            if (!regRes.ok) { 
-                const errData = await regRes.json();
-                alert(`Erro ao criar conta de usuário: ${errData.error || 'Verifique os dados.'}`); 
-                return; 
-            }
+                    const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, email, password, password_confirm: password, city, state: "AL", consentimento, first_name: full_name })
+                    });
 
-            // 2. Autenticação automática — O backend injetará os Cookies HttpOnly na resposta
-            const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            });
+                    if (!regRes.ok) { 
+                        const errData = await regRes.json();
+                        alert(`Erro no registro: ${errData.email || errData.username || "Verifique as informações digitadas."}`); 
+                        return; 
+                    }
 
-            if (!loginRes.ok) { alert("Erro de autenticação automática."); return; }
+                    const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
 
-            // 3. Criação do perfil do trabalhador — credentials: "include" anexa o cookie automaticamente
-            const workerRes = await fetch("http://localhost:8000/api/workers/", {
-                method: "POST",
-                credentials: "include", 
-                headers: { 
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    full_name: document.getElementById("name").value,
-                    phone: document.getElementById("phone").value,
-                    city: city,
-                    state: "AL",
-                    bio: finalBio || rawBio.value,
-                    services: [parseInt(document.getElementById("service").value)]
-                })
-            });
+                    if (!loginRes.ok) { alert("Erro de autenticação."); return; }
+                }
 
-            if (workerRes.ok) {
-                alert("Perfil profissional publicado com sucesso no Banco de Talentos!");
-                window.location.href = "index.html";
-            } else {
-                alert("Erro ao publicar perfil profissional. Sessão expirada ou inválida.");
-            }
+                const formData = new FormData();
+                formData.append("full_name", full_name);
+                // Envia o telefone limpando a máscara visual para persistência limpa no banco
+                const cleanPhone = document.getElementById("phone").value.replace(/\D/g, "");
+                formData.append("phone", cleanPhone);
+                formData.append("city", city);
+                formData.append("state", "AL");
+                formData.append("bio", finalBio || rawBio.value);
+                formData.append("services", parseInt(document.getElementById("service").value));
+                
+                const photoInput = document.getElementById("photo");
+                if (photoInput.files.length > 0) {
+                    formData.append("photo", photoInput.files[0]);
+                }
+
+                const workerRes = await fetch("http://localhost:8000/api/workers/", {
+                    method: "POST",
+                    credentials: "include", 
+                    body: formData 
+                });
+
+                if (workerRes.ok) {
+                    alert("Perfil profissional publicado com sucesso!");
+                    document.getElementById("register-form").reset();
+                    setTimeout(() => {
+                        window.location.replace("index.html");
+                    }, 300);
+                } else { alert("Erro ao registrar os dados profissionais."); }
+            } catch (err) { alert("Erro de rede com o servidor."); }
         });
+
+        loadCities().then(() => checkInitialSession());
     </script>
 </body>
 </html>

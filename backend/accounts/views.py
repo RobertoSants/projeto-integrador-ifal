@@ -5,13 +5,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .serializers import RegisterSerializer, UserSerializer, ChangePasswordSerializer
+from accounts.authentication import CookieJWTAuthentication
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    """
-    Substitui a view padrão para interceptar os tokens gerados e injetá-los 
-    dentro de Cookies HttpOnly seguros, bloqueando vazamentos via XSS.
-    """
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
@@ -44,9 +41,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    """
-    Extrai o refresh token do cookie injetado para gerar um novo access token automático.
-    """
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
         if refresh_token:
@@ -69,9 +63,6 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 class LogoutView(APIView):
-    """
-    Controlador para limpar as credenciais de sessão armazenadas nos cookies.
-    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -85,7 +76,6 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # [LGPD] Validação explícita da aceitação dos termos de uso e consentimento
         consentimento = request.data.get("consentimento", False)
         if not consentimento:
             return Response(
@@ -102,6 +92,8 @@ class RegisterView(APIView):
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
+    # CORREÇÃO CIRÚRGICA: Vincula o descriptografador de cookies seguro para a rota do usuário logado
+    authentication_classes = [CookieJWTAuthentication]
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
@@ -120,6 +112,7 @@ class MeView(APIView):
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
@@ -132,5 +125,5 @@ class ChangePasswordView(APIView):
                 )
             user.set_password(serializer.validated_data["new_password"])
             user.save()
-            return Response({"message": "Senha alterada com sucesso."})
+            return Response({"message": "Senha alterada com sucesso."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

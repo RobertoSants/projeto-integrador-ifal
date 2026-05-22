@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Usuário - Banco de Talentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <style>
+        .auth-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 450px; margin: 60px auto; }
+        .logo { cursor: pointer; }
+        .hidden { display: none !important; }
+        .panel-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .btn-danger { background: var(--cor-al-red-primary) !important; box-shadow: 0 5px 0 var(--cor-al-red-dark) !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">TALENTOS <span>ALAGOAS</span></div>
+        <nav>
+            <a href="index.html">← HOME</a>
+            <a href="#" id="panel-logout" class="hidden" style="color:var(--cor-al-red-primary)">ENCERRAR SESSÃO</a>
+        </nav>
+    </header>
+
+    <div class="container" style="background:transparent; box-shadow:none; padding:0; border:none; max-width:800px;">
+        
+        <div id="login-gate" class="auth-container">
+            <h2 style="color: var(--cor-al-blue-primary); margin-bottom: 10px;">Acessar Minha Conta</h2>
+            <p style="color:#666; margin-bottom: 20px; font-size:14px;">Insira suas credenciais de acesso para gerenciar o seu perfil profissional e atualizar seus dados.</p>
+            <form id="gate-login-form">
+                <div class="form-group">
+                    <label for="gate-username">Usuário (Login)</label>
+                    <input type="text" id="gate-username" required placeholder="Ex: jose_pedreiro">
+                </div>
+                <div class="form-group">
+                    <label for="gate-password">Senha</label>
+                    <input type="password" id="gate-password" required placeholder="Sua senha de acesso">
+                </div>
+                <button type="submit" class="btn-cta" style="width: 100%; border: none; margin-top: 10px;">ENTRAR NO PAINEL</button>
+            </form>
+        </div>
+
+        <div id="main-panel" class="hidden">
+            <h1 style="color: var(--cor-al-blue-primary); margin-bottom: 5px;">Painel Administrativo</h1>
+            <p class="subtitle">Atualize suas informações públicas ou altere seus parâmetros de acesso.</p>
+
+            <div class="panel-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados Profissionais</h3>
+                <form id="update-profile-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="edit-name">Nome Completo</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">E-mail de Contato</label>
+                        <input type="email" id="edit-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Telefone / WhatsApp</label>
+                        <input type="tel" id="edit-phone" required placeholder="(82) 99999-0000" maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-city">Sua Cidade Atual</label>
+                        <select id="edit-city" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-photo">Substituir Foto de Perfil (Opcional)</label>
+                        <input type="file" id="edit-photo" accept="image/*" style="padding:10px 0;">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Sua Biografia Profissional</label>
+                        <textarea id="edit-bio" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-cta" id="btn-save" style="border:none;">SALVAR DADOS</button>
+                </form>
+            </div>
+
+            <div class="panel-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Alterar Senha</h3>
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="pass-old">Senha Atual</label>
+                        <input type="password" id="pass-old" required placeholder="Digite a senha usada hoje">
+                    </div>
+                    <div class="form-group">
+                        <label for="pass-new">Nova Senha</label>
+                        <input type="password" id="pass-new" required placeholder="Mínimo de 8 caracteres">
+                    </div>
+                    <button type="submit" class="btn-cta btn-danger" id="btn-pass" style="border:none;">ATUALIZAR SENHA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProfileId = null;
+        const loginGate = document.getElementById("login-gate");
+        const mainPanel = document.getElementById("main-panel");
+        const logoutNav = document.getElementById("panel-logout");
+
+        document.getElementById("edit-phone").addEventListener("input", function(e) {
+            let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+        });
+
+        async function loadCities() {
+            try {
+                const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/AL/municipios?ordenar=nome");
+                const cities = await response.json();
+                const select = document.getElementById("edit-city");
+                cities.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c.nome;
+                    opt.innerText = c.nome;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro ao carregar municípios", e); }
+        }
+
+        async function fetchMyProfile() {
+            try {
+                const accountResponse = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
+                if (!accountResponse.ok) throw new Error("Não autenticado.");
+                
+                const userData = await accountResponse.json();
+                
+                const response = await fetch("http://localhost:8000/api/workers/me/", { method: "GET", credentials: "include" });
+                
+                if (response.status === 404) {
+                    alert("Sua conta de acesso foi identificada, mas você ainda não publicou seu perfil profissional. Redirecionando para a página de anúncio.");
+                    window.location.href = "cadastro.html";
+                    return;
+                }
+
+                if (!response.ok) throw new Error("Erro ao coletar dados do perfil.");
+                
+                const myProfile = await response.json();
+                currentProfileId = myProfile.id;
+                
+                document.getElementById("edit-name").value = myProfile.full_name;
+                document.getElementById("edit-email").value = userData.email || ""; 
+                document.getElementById("edit-phone").value = myProfile.phone;
+                
+                document.getElementById("edit-phone").dispatchEvent(new Event('input'));
+                
+                document.getElementById("edit-city").value = myProfile.city;
+                document.getElementById("edit-bio").value = myProfile.bio || "";
+                
+                loginGate.classList.add("hidden");
+                mainPanel.classList.remove("hidden");
+                logoutNav.classList.remove("hidden");
+            } catch(e) {
+                mainPanel.classList.add("hidden");
+                logoutNav.classList.add("hidden");
+                loginGate.classList.remove("hidden");
+            }
+        }
+
+        document.getElementById("gate-login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("gate-username").value.trim();
+            const password = document.getElementById("gate-password").value;
+
+            try {
+                const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (loginRes.ok) {
+                    fetchMyProfile();
+                } else { alert("Usuário ou senha incorretos."); }
+            } catch(err) { alert("Erro de comunicação com o servidor."); }
+        });
+
+        logoutNav.addEventListener("click", async (e) => {
+            e.preventDefault();
+            try {
+                const res = await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
+                if (res.ok) { window.location.href = "index.html"; }
+            } catch (err) { alert("Erro ao deslogar."); }
+        });
+
+        document.getElementById("update-profile-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById("btn-save");
+            btnSave.innerText = "Salvando...";
+            
+            const emailVal = document.getElementById("edit-email").value.trim();
+            
+            try {
+                const userRes = await fetch("http://localhost:8000/api/accounts/me/", {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: emailVal, first_name: document.getElementById("edit-name").value })
+                });
+                
+                if(!userRes.ok) {
+                    alert("Erro ao atualizar o e-mail da conta de acesso. Verifique se ele já está em uso.");
+                    btnSave.innerText = "SALVAR DADOS";
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("full_name", document.getElementById("edit-name").value);
+                const cleanPhone = document.getElementById("edit-phone").value.replace(/\D/g, "");
+                formData.append("phone", cleanPhone);
+                formData.append("city", document.getElementById("edit-city").value);
+                formData.append("bio", document.getElementById("edit-bio").value);
+                
+                const photoInput = document.getElementById("edit-photo");
+                if(photoInput.files.length > 0) {
+                    formData.append("photo", photoInput.files[0]);
+                }
+
+                const res = await fetch(`http://localhost:8000/api/workers/${currentProfileId}/`, {
+                    method: "PUT",
+                    credentials: "include",
+                    body: formData
+                });
+                
+                if(res.ok) {
+                    alert("Suas informações foram salvas com sucesso!");
+                    window.location.href = "index.html";
+                } else { alert("Ocorreu um erro ao processar os dados do perfil profissional no servidor."); }
+            } catch(err) { alert("Erro de rede com o backend."); }
+            finally { btnSave.innerText = "SALVAR DADOS"; }
+        });
+
+        document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btnPass = document.getElementById("btn-pass");
+            const old_password = document.getElementById("pass-old").value;
+            const new_password = document.getElementById("pass-new").value;
+            
+            if (new_password.length < 8 || !/[A-Za-z]/.test(new_password) || !/[0-9]/.test(new_password)) {
+                alert("A nova senha deve conter no mínimo 8 caracteres, incluindo letras e números.");
+                return;
+            }
+            
+            btnPass.innerText = "Atualizando...";
+
+            try {
+                // CORREÇÃO CIRÚRGICA: Rota alterada para bater exatamente na URL mapeada pelo Django (/password/change/)
+                const res = await fetch("http://localhost:8000/api/accounts/password/change/", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ old_password, new_password })
+                });
+                
+                if (res.ok) {
+                    alert("Senha alterada com sucesso! Faça login novamente.");
+                    await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
+                    window.location.reload();
+                } else {
+                    const data = await res.json();
+                    alert(`Erro: ${data.error || "Dados inválidos ou senha atual incorreta."}`);
+                }
+            } catch (err) { alert("Erro de comunicação de segurança."); }
+            finally { btnPass.innerText = "ATUALIZAR SENHA"; }
+        });
+
+        loadCities().then(() => fetchMyProfile());
+    </script>
+</body>
+</html>

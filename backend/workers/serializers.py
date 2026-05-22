@@ -1,10 +1,9 @@
+import re
 from rest_framework import serializers
 from .models import Worker
 from services.serializers import ServiceCategorySerializer
 
-
 class WorkerListSerializer(serializers.ModelSerializer):
-    # Lê avg_rating da anotação do banco (Avg); fallback para a property do model
     avg_rating = serializers.FloatField(read_only=True)
     services = serializers.StringRelatedField(many=True)
     is_local = serializers.SerializerMethodField()
@@ -35,11 +34,7 @@ class WorkerDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = [
-            "id", "user", "full_name", "bio", "phone",
-            "city", "state", "photo", "photo_url", "services",
-            "avg_rating", "created_at",
-        ]
+        fields = ["id", "user", "full_name", "bio", "phone", "city", "state", "photo", "photo_url", "services", "avg_rating", "created_at"]
 
     def get_photo_url(self, obj):
         if not obj.photo:
@@ -54,6 +49,13 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worker
         fields = ["full_name", "bio", "phone", "city", "state", "photo", "services"]
+
+    def validate_phone(self, value):
+        # REGEX DE SEGURANÇA: Remove caracteres especiais temporariamente para avaliar se há entre 10 e 11 números puros
+        clean_phone = re.sub(r"\D", "", value)
+        if not (10 <= len(clean_phone) <= 11):
+            raise serializers.ValidationError("O telefone deve conter um formato regional válido com DDD (Ex: 82999990000).")
+        return clean_phone
 
     def create(self, validated_data):
         services = validated_data.pop("services", [])
