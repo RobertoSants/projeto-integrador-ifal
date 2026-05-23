@@ -1,20 +1,20 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Avg, Q, F, Case, When, BooleanField
 from workers.models import Worker
 from workers.serializers import WorkerListSerializer
 
 
 class SearchView(APIView):
     def get(self, request):
-        queryset = Worker.objects.all()
+        # avg_rating calculado no banco — evita trazer tudo pra memória
+        queryset = Worker.objects.annotate(avg_rating=Avg("reviews__rating"))
 
-        # Filtro por texto livre
+        # Filtro por texto livre usando Q — uma única query com OR
         q = request.query_params.get("q")
         if q:
             queryset = queryset.filter(
-                full_name__icontains=q
-            ) | queryset.filter(
-                bio__icontains=q
+                Q(full_name__icontains=q) | Q(bio__icontains=q)
             )
 
         # Filtro exclusivo por cidade
@@ -27,8 +27,13 @@ class SearchView(APIView):
         if service:
             queryset = queryset.filter(services__id=service)
 
-        # Filtro por nota mínima
+        # Filtro por nota mínima — agora feito no banco via anotação
         rating = request.query_params.get("rating")
+        if rating:
+            try:
+                queryset = queryset.filter(avg_rating__gte=float(rating))
+            except ValueError:
+                pass
 
         # Determina a cidade do contratante para priorização
         # 1. Usuário autenticado → usa a cidade do perfil dele
@@ -39,35 +44,29 @@ class SearchView(APIView):
         elif request.query_params.get("contratante_city"):
             contratante_city = request.query_params.get("contratante_city")
 
-        # Converte queryset para lista para poder ordenar com priorização
-        workers = list(queryset.distinct())
-
-        # Filtra por rating mínimo (feito em Python pois avg_rating é @property)
-        if rating:
-            try:
-                min_rating = float(rating)
-                workers = [w for w in workers if w.avg_rating and w.avg_rating >= min_rating]
-            except ValueError:
-                pass
-
-        # Priorização: locais primeiro, depois por avg_rating decrescente
+        # Priorização e ordenação no banco: locais primeiro, depois rating desc
+        # Workers sem avaliação ficam no fim (nulls_last)
         if contratante_city:
-            def sort_key(w):
-                is_local = w.city.lower() == contratante_city.lower()
-                avg = w.avg_rating or 0
-                return (not is_local, -avg)  # locais primeiro (False < True)
-            workers.sort(key=sort_key)
+            queryset = queryset.annotate(
+                is_local=Case(
+                    When(city__iexact=contratante_city, then=True),
+                    default=False,
+                    output_field=BooleanField(),
+                )
+            ).order_by("-is_local", F("avg_rating").desc(nulls_last=True))
         else:
-            workers.sort(key=lambda w: -(w.avg_rating or 0))
+            queryset = queryset.order_by(F("avg_rating").desc(nulls_last=True))
+
+        queryset = queryset.distinct()
 
         serializer = WorkerListSerializer(
-            workers,
+            queryset,
             many=True,
-            context={"contratante_city": contratante_city}
+            context={"contratante_city": contratante_city, "request": request},
         )
 
         return Response({
-            "count": len(workers),
+            "count": queryset.count(),
             "contratante_city": contratante_city,
             "results": serializer.data,
         })

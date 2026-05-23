@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Profissional - Alagoas Regional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">TALENTOS <span>ALAGOAS</span></div>
+        <nav><a href="index.html">← VOLTAR PARA O INÍCIO</a></nav>
+    </header>
+
+    <div class="container">
+        <h1 id="cadastro-title">Anuncie seu Trabalho</h1>
+        <p class="subtitle" id="cadastro-subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
+
+        <form id="register-form" enctype="multipart/form-data">
+            <div id="step-1" class="form-step">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
+                <div class="form-group">
+                    <label for="username">Nome de Usuário (Login)</label>
+                    <input type="text" id="username" placeholder="Ex: jose_oliveira">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail Pessoal</label>
+                    <input type="email" id="email" placeholder="Ex: jose.oliveira@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha de Segurança</label>
+                    <input type="password" id="password" placeholder="Mínimo de 8 caracteres contendo letras e números">
+                </div>
+                
+                <div class="form-group" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 20px;">
+                    <input type="checkbox" id="consentimento" style="margin-top: 4px; cursor: pointer;">
+                    <label for="consentimento" style="font-size: 13px; color: #555; cursor: pointer; line-height: 1.4;">
+                        Autorizo o processamento dos meus dados cadastrais e profissionais para fins de visibilidade e geração de renda na plataforma, em estrita conformidade com as diretrizes da LGPD.
+                    </label>
+                </div>
+
+                <button type="button" class="btn-cta" id="btn-next-step" style="width: 100%; border: none; text-align: center; margin-top: 20px;">AVANÇAR PARA PERFIL PROFISSIONAL →</button>
+            </div>
+
+            <div id="step-2" class="form-step" style="display: none;">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 2: Perfil Profissional</h3>
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" placeholder="Ex: José Oliveira da Silva">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone / WhatsApp</label>
+                    <input type="tel" id="phone" placeholder="(82) 99999-0000" maxlength="15">
+                </div>
+                <div class="form-group">
+                    <label for="city">Seu Município de Atuação</label>
+                    <select id="city">
+                        <option value="" disabled selected>Escolha sua cidade...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="service">Eixo Setorial Principal</label>
+                    <select id="service">
+                        <option value="" disabled selected>Selecione sua categoria...</option>
+                        <option value="1">Produção Rural</option>
+                        <option value="2">Construção</option>
+                        <option value="3">Artesanato</option>
+                        <option value="4">Logística</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo">Sua Foto de Perfil (Opcional)</label>
+                    <input type="file" id="photo" accept="image/*" style="padding:10px 0;">
+                </div>
+
+                <div class="form-group">
+                    <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
+                    <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo."></textarea>
+                    
+                    <div class="ai-container">
+                        <div class="ai-header">
+                            <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                            <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+                        </div>
+                        <div class="ai-preview" id="ai-preview"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-cta" id="btn-prev-step" style="background: #666; width: 40%; border: none; text-align: center;">← VOLTAR</button>
+                    <button type="submit" class="btn-cta" style="width: 60%; border: none; text-align: center;">CONFIRMAR E PUBLICAR</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let isAlreadyLogged = false;
+
+        document.getElementById("phone").addEventListener("input", function(e) {
+            let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+        });
+
+        async function loadCities() {
+            try {
+                const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/AL/municipios?ordenar=nome");
+                const cities = await response.json();
+                const select = document.getElementById("city");
+                cities.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c.nome;
+                    opt.innerText = c.nome;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro ao carregar municípios", e); }
+        }
+
+        async function checkInitialSession() {
+            try {
+                const res = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
+                if (res.ok) {
+                    isAlreadyLogged = true;
+                    document.getElementById("cadastro-title").innerText = "Complete seu Perfil";
+                    document.getElementById("cadastro-subtitle").innerText = "Sua conta já está conectada. Preencha seus dados de anúncio profissional abaixo.";
+                    
+                    document.getElementById("step-1").style.display = "none";
+                    document.getElementById("step-2").style.display = "block";
+                    document.getElementById("btn-prev-step").style.display = "none";
+                    
+                    document.getElementById("name").required = true;
+                    document.getElementById("phone").required = true;
+                    document.getElementById("city").required = true;
+                    document.getElementById("service").required = true;
+                    document.getElementById("raw-bio").required = true;
+                } else {
+                    document.getElementById("username").required = true;
+                    document.getElementById("email").required = true;
+                    document.getElementById("password").required = true;
+                    document.getElementById("consentimento").required = true;
+                }
+            } catch (e) { console.log("Usuário anônimo."); }
+        }
+
+        const btnOptimize = document.getElementById('btn-optimize');
+        const rawBio = document.getElementById('raw-bio');
+        const aiPreview = document.getElementById('ai-preview');
+        
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const btnNextStep = document.getElementById('btn-next-step');
+        const btnPrevStep = document.getElementById('btn-prev-step');
+        
+        let finalBio = "";
+
+        btnNextStep.addEventListener('click', () => {
+            const userVal = document.getElementById("username").value.trim();
+            const emailVal = document.getElementById("email").value.trim();
+            const passVal = document.getElementById("password").value;
+
+            if (!userVal || !emailVal || !passVal) {
+                alert("Por favor, preencha todos os campos da conta de acesso.");
+                return;
+            }
+
+            // CORREÇÃO DE VALIDAÇÃO: Expressão regular profissional para validar estrutura de e-mail antes de passar de etapa
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                alert("Por favor, insira um endereço de e-mail válido (Ex: nome@dominio.com).");
+                document.getElementById("email").focus();
+                return;
+            }
+
+            if (passVal.length < 8 || !/[A-Za-z]/.test(passVal) || !/[0-9]/.test(passVal)) {
+                alert("Sua senha está fraca. Crie uma senha com no mínimo 8 caracteres contendo letras e números.");
+                return;
+            }
+            if (!document.getElementById("consentimento").checked) {
+                alert("É obrigatório autorizar o consentimento LGPD para continuar.");
+                return;
+            }
+
+            document.getElementById("name").required = true;
+            document.getElementById("phone").required = true;
+            document.getElementById("city").required = true;
+            document.getElementById("service").required = true;
+            document.getElementById("raw-bio").required = true;
+
+            step1.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        btnPrevStep.addEventListener('click', () => {
+            document.getElementById("name").required = false;
+            document.getElementById("phone").required = false;
+            document.getElementById("city").required = false;
+            document.getElementById("service").required = false;
+            document.getElementById("raw-bio").required = false;
+
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+
+        btnOptimize.addEventListener('click', async () => {
+            if (!rawBio.value.trim()) return;
+            btnOptimize.innerText = 'Processando...';
+            try {
+                const response = await fetch("http://localhost:8000/api/workers/optimize-bio/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bio: rawBio.value })
+                });
+                const data = await response.json();
+                finalBio = data.optimized_bio;
+                aiPreview.innerHTML = `<strong>✨ Biografia Otimizada:</strong><br>${finalBio}`;
+                aiPreview.style.display = 'block';
+                btnOptimize.innerText = 'Texto Otimizado!';
+            } catch (e) { btnOptimize.innerText = 'Erro na IA'; }
+        });
+
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const city = document.getElementById("city").value;
+            const full_name = document.getElementById("name").value.trim();
+
+            try {
+                if (!isAlreadyLogged) {
+                    const username = document.getElementById("username").value.trim();
+                    const email = document.getElementById("email").value.trim();
+                    const password = document.getElementById("password").value;
+                    const consentimento = document.getElementById("consentimento").checked;
+
+                    const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, email, password, password_confirm: password, city, state: "AL", consentimento, first_name: full_name })
+                    });
+
+                    if (!regRes.ok) { 
+                        const errData = await regRes.json();
+                        alert(`Erro no registro: ${errData.email || errData.username || "Verifique as informações digitadas."}`); 
+                        return; 
+                    }
+
+                    const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (!loginRes.ok) { alert("Erro de autenticação."); return; }
+                }
+
+                const formData = new FormData();
+                formData.append("full_name", full_name);
+                // Envia o telefone limpando a máscara visual para persistência limpa no banco
+                const cleanPhone = document.getElementById("phone").value.replace(/\D/g, "");
+                formData.append("phone", cleanPhone);
+                formData.append("city", city);
+                formData.append("state", "AL");
+                formData.append("bio", finalBio || rawBio.value);
+                formData.append("services", parseInt(document.getElementById("service").value));
+                
+                const photoInput = document.getElementById("photo");
+                if (photoInput.files.length > 0) {
+                    formData.append("photo", photoInput.files[0]);
+                }
+
+                const workerRes = await fetch("http://localhost:8000/api/workers/", {
+                    method: "POST",
+                    credentials: "include", 
+                    body: formData 
+                });
+
+                if (workerRes.ok) {
+                    alert("Perfil profissional publicado com sucesso!");
+                    document.getElementById("register-form").reset();
+                    setTimeout(() => {
+                        window.location.replace("index.html");
+                    }, 300);
+                } else { alert("Erro ao registrar os dados profissionais."); }
+            } catch (err) { alert("Erro de rede com o servidor."); }
+        });
+
+        loadCities().then(() => checkInitialSession());
+    </script>
+</body>
+</html>

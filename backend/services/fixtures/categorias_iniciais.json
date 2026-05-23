@@ -1,0 +1,38 @@
+[
+  {
+    "model": "services.servicecategory",
+    "pk": 1,
+    "fields": {
+      "name": "Produção Rural",
+      "description": "Atividades agrícolas, pecuária, extrativismo e produção no campo.",
+      "icon": "PRODUCAO_RURAL"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 2,
+    "fields": {
+      "name": "Construção",
+      "description": "Obras, reformas, serviços de pedreiro, eletricista, encanador e afins.",
+      "icon": "CONSTRUCAO"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 3,
+    "fields": {
+      "name": "Artesanato",
+      "description": "Produção artesanal, manufatura local e economia criativa.",
+      "icon": "ARTESANATO"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 4,
+    "fields": {
+      "name": "Logística",
+      "description": "Transporte, entrega, armazenamento e movimentação de cargas.",
+      "icon": "LOGISTICA"
+    }
+  }
+]

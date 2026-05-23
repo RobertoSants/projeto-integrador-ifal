@@ -4,7 +4,6 @@ from services.models import ServiceCategory
 
 User = get_user_model()
 
-
 class Worker(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="worker_profile")
     full_name = models.CharField(max_length=200)
@@ -13,7 +12,7 @@ class Worker(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=2)
     photo = models.ImageField(upload_to="fotos/", blank=True, null=True)
-    services = models.ManyToManyField(ServiceCategory, blank=True)
+    services = models.ManyToManyField(ServiceCategory, blank=True, related_name="workers")
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
