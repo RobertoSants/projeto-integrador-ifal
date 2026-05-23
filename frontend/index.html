@@ -177,6 +177,9 @@
                 const isLocal = w.is_local === true || w.is_local === "true";
                 const badgeStyle = isLocal ? `style="background-color: var(--cor-al-red-primary);"` : '';
                 const badgeText = isLocal ? '📍 TALENTO LOCAL' : `📍 ${localizacaoTxt}`;
+                const ratingTxt = w.avg_rating !== null && w.avg_rating !== undefined 
+                    ? parseFloat(w.avg_rating).toFixed(2) 
+                    : '5.00';
                 
                 card.innerHTML = `
                     <div class="card-local" ${badgeStyle}>${badgeText}</div>
@@ -184,7 +187,7 @@
                     <div class="card-body">
                         <h3>${w.full_name || 'Profissional Autônomo'}</h3>
                         <p><strong>${setorTxt}</strong></p>
-                        <p class="rating">⭐⭐⭐⭐⭐ ${w.avg_rating || '5.0'}</p>
+                        <p class="rating">⭐⭐⭐⭐⭐ ${ratingTxt}</p>
                         <a href="https://wa.me/${w.phone}" target="_blank" class="btn-cta btn-whatsapp" style="padding:10px; font-size:12px; text-align:center; display:block; margin-top:15px; box-shadow:none;" onclick="event.stopPropagation();">CONTACTAR VIA WHATSAPP</a>
                     </div>
                 `;

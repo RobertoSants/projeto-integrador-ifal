@@ -18,15 +18,20 @@ class Worker(models.Model):
     @property
     def avg_rating(self):
         if hasattr(self, "_avg_rating"):
-            return self._avg_rating
+            if self._avg_rating is not None:
+                return round(float(self._avg_rating), 2)
+            return None
         reviews = self.reviews.all()
         if not reviews.exists():
             return None
-        return round(sum(r.rating for r in reviews) / reviews.count(), 1)
+        return round(sum(r.rating for r in reviews) / reviews.count(), 2)
 
     @avg_rating.setter
     def avg_rating(self, value):
-        self._avg_rating = value
+        if value is not None:
+            self._avg_rating = round(float(value), 2)
+        else:
+            self._avg_rating = None
 
     def __str__(self):
         return self.full_name
