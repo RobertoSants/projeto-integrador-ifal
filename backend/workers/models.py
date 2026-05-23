@@ -17,10 +17,16 @@ class Worker(models.Model):
 
     @property
     def avg_rating(self):
+        if hasattr(self, "_avg_rating"):
+            return self._avg_rating
         reviews = self.reviews.all()
         if not reviews.exists():
             return None
         return round(sum(r.rating for r in reviews) / reviews.count(), 1)
+
+    @avg_rating.setter
+    def avg_rating(self, value):
+        self._avg_rating = value
 
     def __str__(self):
         return self.full_name

@@ -137,14 +137,14 @@
             if (activeCategory) params.push(`service=${activeCategory}`);
 
             const queryString = params.length > 0 ? `?${params.join('&')}` : '';
-            const finalUrl = `http://localhost:8000/api/workers/${queryString}`;
+            const finalUrl = `http://localhost:8000/api/search/${queryString}`;
 
             try {
-                const response = await fetch(finalUrl, { method: "GET", credentials: "omit" });
+                const response = await fetch(finalUrl, { method: "GET", credentials: "include" });
                 if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
                 
                 const data = await response.json();
-                const workersList = data.results ? data.results : (Array.isArray(data) ? data : []);
+                const workersList = data.results || [];
                 
                 const interiorWorkers = workersList.filter(w => w.city.toLowerCase() !== "maceió");
                 const capitalWorkers = workersList.filter(w => w.city.toLowerCase() === "maceió");
@@ -174,8 +174,12 @@
                 const setorTxt = Array.isArray(w.services) ? w.services.join(', ') : 'Autônomo';
                 const localizacaoTxt = w.city ? w.city.toUpperCase() : 'AL';
                 
+                const isLocal = w.is_local === true || w.is_local === "true";
+                const badgeStyle = isLocal ? `style="background-color: var(--cor-al-red-primary);"` : '';
+                const badgeText = isLocal ? '📍 TALENTO LOCAL' : `📍 ${localizacaoTxt}`;
+                
                 card.innerHTML = `
-                    <div class="card-local">📍 ${localizacaoTxt}</div>
+                    <div class="card-local" ${badgeStyle}>${badgeText}</div>
                     <div class="card-img" style="background-image: url('${w.photo_url ? w.photo_url : defaultImg}')"></div>
                     <div class="card-body">
                         <h3>${w.full_name || 'Profissional Autônomo'}</h3>
