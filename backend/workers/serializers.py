@@ -2,6 +2,7 @@ import re
 from rest_framework import serializers
 from .models import Worker
 from services.serializers import ServiceCategorySerializer
+from services.models import ServiceCategory
 
 class WorkerListSerializer(serializers.ModelSerializer):
     avg_rating = serializers.FloatField(read_only=True)
@@ -46,6 +47,13 @@ class WorkerDetailSerializer(serializers.ModelSerializer):
 
 
 class WorkerCreateSerializer(serializers.ModelSerializer):
+    services = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=ServiceCategory.objects.all(),
+        required=True,
+        allow_empty=False,
+    )
+
     class Meta:
         model = Worker
         fields = ["full_name", "bio", "phone", "city", "state", "photo", "services"]

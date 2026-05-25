@@ -5,3 +5,5 @@ django-cors-headers>=4.3
 python-decouple>=3.8
 psycopg2-binary>=2.9
 Pillow>=10.0
+pytest>=8.0
+pytest-django>=4.8

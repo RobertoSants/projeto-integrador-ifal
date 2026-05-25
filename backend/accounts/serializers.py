@@ -10,6 +10,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True)
     # REQUISITO DE SEGURANÇA: E-mail obrigatório e único em nível de serializador
     email = serializers.EmailField(required=True)
+    city = serializers.CharField(required=True, allow_blank=False)
+    state = serializers.CharField(required=True, allow_blank=False, max_length=2)
 
     class Meta:
         model = User
