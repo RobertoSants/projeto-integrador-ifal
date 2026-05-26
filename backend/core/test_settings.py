@@ -1,25 +1,26 @@
-import os
-
-os.environ.setdefault("SECRET_KEY", "test-secret-key-for-pytest-suite-2026-strong-enough")
-os.environ.setdefault("DEBUG", "True")
-os.environ.setdefault("ALLOWED_HOSTS", "localhost,127.0.0.1")
-os.environ.setdefault("DB_NAME", "test_db")
-os.environ.setdefault("DB_USER", "test_user")
-os.environ.setdefault("DB_PASSWORD", "test_password")
-os.environ.setdefault("DB_HOST", "localhost")
-os.environ.setdefault("DB_PORT", "5432")
-
 from .settings import *  # noqa: F401,F403
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "test_db.sqlite3",
-    }
-}
+TEST_DB_ENGINE = config("TEST_DB_ENGINE", default="django.db.backends.postgresql")
 
-PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.MD5PasswordHasher",
-]
+if TEST_DB_ENGINE == "django.db.backends.sqlite3":
+    DATABASES = {
+        "default": {
+            "ENGINE": TEST_DB_ENGINE,
+            "NAME": BASE_DIR / "test_db.sqlite3",
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": TEST_DB_ENGINE,
+            "NAME": config("DB_NAME", default="banco_talentos"),
+            "USER": config("DB_USER", default="pguser"),
+            "PASSWORD": config("DB_PASSWORD", default="pgpass"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("TEST_DB_PORT", default=config("DB_PORT", default="5433")),
+        }
+    }
+
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"

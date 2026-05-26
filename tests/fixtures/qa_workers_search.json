@@ -1,0 +1,114 @@
+[
+  {
+    "model": "accounts.user",
+    "pk": 101,
+    "fields": {
+      "password": "placeholder",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "qa_worker_creator",
+      "first_name": "",
+      "last_name": "",
+      "email": "qa_worker_creator@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-05-25T12:00:00Z",
+      "city": "Maceió",
+      "state": "AL",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 102,
+    "fields": {
+      "password": "placeholder",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "qa_search_local",
+      "first_name": "",
+      "last_name": "",
+      "email": "qa_search_local@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-05-25T12:00:00Z",
+      "city": "Maceió",
+      "state": "AL",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 103,
+    "fields": {
+      "password": "placeholder",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "qa_search_remote",
+      "first_name": "",
+      "last_name": "",
+      "email": "qa_search_remote@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-05-25T12:00:00Z",
+      "city": "Arapiraca",
+      "state": "AL",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "workers.worker",
+    "pk": 201,
+    "fields": {
+      "user": 102,
+      "full_name": "Carlos Oliveira",
+      "bio": "Profissional de pintura residencial em Maceió",
+      "phone": "82999990001",
+      "city": "Maceió",
+      "state": "AL",
+      "photo": null,
+      "created_at": "2026-05-25T12:00:00Z",
+      "services": [2]
+    }
+  },
+  {
+    "model": "workers.worker",
+    "pk": 202,
+    "fields": {
+      "user": 103,
+      "full_name": "Marcos Silva",
+      "bio": "Profissional de elétrica e manutenção em Arapiraca",
+      "phone": "82999990002",
+      "city": "Arapiraca",
+      "state": "AL",
+      "photo": null,
+      "created_at": "2026-05-25T12:00:00Z",
+      "services": [2]
+    }
+  },
+  {
+    "model": "reviews.review",
+    "pk": 301,
+    "fields": {
+      "worker": 201,
+      "author": null,
+      "rating": 4,
+      "comment": "Bom profissional",
+      "created_at": "2026-05-25T12:00:00Z"
+    }
+  },
+  {
+    "model": "reviews.review",
+    "pk": 302,
+    "fields": {
+      "worker": 202,
+      "author": null,
+      "rating": 5,
+      "comment": "Excelente profissional",
+      "created_at": "2026-05-25T12:00:00Z"
+    }
+  }
+]

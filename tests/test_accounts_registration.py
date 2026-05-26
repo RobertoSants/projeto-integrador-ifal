@@ -67,15 +67,18 @@ def test_ct_002_rejeita_email_duplicado():
 @pytest.mark.django_db
 def test_ct_003_rejeita_senhas_nao_coincidentes():
     client = APIClient()
+    existing_count = User.objects.count()
+    payload = build_payload(password_confirm="Senha4321")
     response = client.post(
         "/api/accounts/register/",
-        build_payload(password_confirm="Senha4321"),
+        payload,
         format="json",
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "password" in response.data
-    assert User.objects.count() == 0
+    assert User.objects.count() == existing_count
+    assert not User.objects.filter(username=payload["username"]).exists()
 
 
 @pytest.mark.django_db
@@ -97,15 +100,18 @@ def test_ct_004_requer_campos_obrigatorios_no_cadastro(missing_field):
 @pytest.mark.django_db
 def test_ct_005_rejeita_email_malformado():
     client = APIClient()
+    existing_count = User.objects.count()
+    payload = build_payload(email="email_invalido")
     response = client.post(
         "/api/accounts/register/",
-        build_payload(email="email_invalido"),
+        payload,
         format="json",
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "email" in response.data
-    assert User.objects.count() == 0
+    assert User.objects.count() == existing_count
+    assert not User.objects.filter(username=payload["username"]).exists()
 
 
 @pytest.mark.django_db
