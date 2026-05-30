@@ -28,5 +28,6 @@ staticfiles/
 .DS_Store
 Thumbs.db
 
-# Ignora a pasta de dependências do Node
+# Ignora a pasta de dependências do Node e dist do frontend
 frontend/node_modules/
+frontend/dist/
