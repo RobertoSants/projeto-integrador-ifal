@@ -27,3 +27,6 @@ staticfiles/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Ignora a pasta de dependências do Node
+frontend/node_modules/
