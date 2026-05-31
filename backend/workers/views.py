@@ -85,16 +85,19 @@ class OptimizeBioView(APIView):
     POST /api/workers/optimize-bio/
     Body : {"bio": "<rascunho bruto>"}
     200  : {"optimized_bio": "<texto aprimorado>"}
-    400  : {"error": "O campo 'bio' é obrigatório..."}
+    400  : {"error": "O campo 'bio' é obrigatório e não pode estar vazio."}
+
+    Aberto sem autenticação (AllowAny) para facilitar testes integrados.
+    O método `_process_bio` é o ponto de injeção das bibliotecas de NLP —
+    substitua sua implementação sem alterar a assinatura da view.
     """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        # --- extração e validação do payload ---
         raw_bio = ""
         if isinstance(request.data, dict):
             raw_bio = str(request.data.get("bio", "") or "").strip()
-        else:
-            raw_bio = str(request.data or "").strip()
 
         if not raw_bio:
             return Response(
@@ -102,8 +105,17 @@ class OptimizeBioView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        optimized_bio = self._call_gemini(raw_bio)
+        # --- ponto de injeção NLP: troque _process_bio pela sua implementação ---
+        optimized_bio = self._process_bio(raw_bio)
         return Response({"optimized_bio": optimized_bio}, status=status.HTTP_200_OK)
+
+    def _process_bio(self, raw_bio: str) -> str:
+        """
+        Ponto de entrada para as bibliotecas generativas de linguagem.
+        Recebe o texto cru validado e devolve o texto processado.
+        Delega para _call_gemini enquanto a integração NLP não for injetada.
+        """
+        return self._call_gemini(raw_bio)
 
     def _call_gemini(self, raw_bio: str) -> str:
         if not _GEMINI_AVAILABLE:
@@ -239,5 +251,3 @@ class WorkerReviewsView(APIView):
             serializer.save(worker=worker, author=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
