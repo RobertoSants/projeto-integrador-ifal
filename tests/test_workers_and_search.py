@@ -228,6 +228,70 @@ def test_ct_021_busca_case_insensitive():
     assert lower_response.data["count"] == upper_response.data["count"] == 1
     assert lower_response.data["results"][0]["full_name"] == upper_response.data["results"][0]["full_name"] == LOCAL_WORKER_NAME
 
+@pytest.mark.django_db
+def test_ct_023_optimize_bio_returns_422_when_bio_empty():
+    client = APIClient()
+    response = client.post("/api/workers/optimize-bio/", {"bio": ""}, format="json")
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.data["error"] == "O campo 'bio' é obrigatório e não pode estar vazio."
+
+
+@pytest.mark.django_db
+def test_ct_024_optimize_bio_returns_fallback_when_gemini_unavailable(monkeypatch):
+    from workers import views
+
+    monkeypatch.setattr(views, "_GEMINI_AVAILABLE", False)
+    client = APIClient()
+
+    response = client.post(
+        "/api/workers/optimize-bio/",
+        {"bio": "Eu faço pintura e limpeza"},
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["optimized_bio"] == (
+        "Não foi possível aprimorar o texto neste momento devido a uma "
+        "instabilidade no serviço externo. Por favor, tente novamente em "
+        "alguns instantes."
+    )
+
+
+@pytest.mark.django_db
+def test_ct_025_optimize_bio_returns_generated_text(monkeypatch):
+    from workers import views
+
+    class FakeResponse:
+        text = "Profissional com experiência em pintura e limpeza, pronto para atender demandas locais."
+
+    class FakeClient:
+        def __init__(self, api_key=None):
+            self.api_key = api_key
+            self.models = self
+
+        def generate_content(self, model, contents, config):
+            assert contents == "Eu faço pintura e limpeza"
+            assert model == settings.GEMINI_MODEL
+            assert config.temperature == 0.3
+            return FakeResponse()
+
+    fake_genai = type("FakeGemini", (), {"Client": FakeClient})
+    fake_types = type("FakeTypes", (), {"GenerateContentConfig": lambda **kwargs: type("C", (), kwargs)})
+
+    monkeypatch.setattr(views, "_GEMINI_AVAILABLE", True)
+    monkeypatch.setattr(views, "genai", fake_genai)
+    monkeypatch.setattr(views, "genai_types", fake_types)
+
+    client = APIClient()
+    response = client.post(
+        "/api/workers/optimize-bio/",
+        {"bio": "Eu faço pintura e limpeza"},
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["optimized_bio"] == FakeResponse.text
 
 @pytest.mark.django_db
 def test_ct_022_parametros_desconhecidos_sao_ignorados():
