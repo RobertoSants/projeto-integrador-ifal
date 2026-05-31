@@ -10,13 +10,10 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Chave secreta carregada via variável de ambiente (Crucial nunca expor no Git)
 SECRET_KEY = config("SECRET_KEY")
 
-# Em produção, DEBUG deve ser obrigatoriamente False
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-# [SEGURANÇA] Restrição de Hosts para mitigar HTTP Host Header Injection
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", 
     default="localhost,127.0.0.1", 
@@ -73,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-# Banco de Dados — PostgreSQL para Desenvolvimento/Produção
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -85,7 +81,6 @@ DATABASES = {
     }
 }
 
-# Validação estrita de senhas dos usuários (Trabalhadores/Contratantes)
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -104,13 +99,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Custom User Model unificando a autenticação
 AUTH_USER_MODEL = "accounts.User"
 
-# Django REST Framework Configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        # Substitui a classe padrão pela nossa classe customizada com suporte a Cookies e Bearer
         "accounts.authentication.CookieJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
@@ -118,7 +110,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-# [SEGURANÇA & LGPD] Configuração Robusta de Tokens JWT via Cookie HttpOnly
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -160,3 +151,6 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000 # 1 ano
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+GEMINI_API_KEY = config("GEMINI_API_KEY")
+GEMINI_MODEL   = config("GEMINI_MODEL", default="gemini-2.0-flash")
