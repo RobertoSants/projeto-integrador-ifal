@@ -92,7 +92,6 @@ class RegisterView(APIView):
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
-    # CORREÇÃO CIRÚRGICA: Vincula o descriptografador de cookies seguro para a rota do usuário logado
     authentication_classes = [CookieJWTAuthentication]
 
     def get(self, request):
@@ -105,9 +104,18 @@ class MeView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # RECONSTRUTOR DE EXCLUSÃO LGPD COMPARTILHADO: Apaga o usuário e expira as chaves JWT de cookies na hora
     def delete(self, request):
-        request.user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        user_to_delete = request.user
+        response = Response({"message": "Conta removida com sucesso."}, status=status.HTTP_204_NO_CONTENT)
+        
+        # 1. Limpa os cookies do navegador para impedir requisições subsequentes com tokens antigos
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
+        response.delete_cookie("refresh_token")
+        
+        # 2. Executa a deleção lógica e física no PostgreSQL (A deleção CASCADE limpa a tabela Worker automaticamente)
+        user_to_delete.delete()
+        return response
 
 
 class ChangePasswordView(APIView):

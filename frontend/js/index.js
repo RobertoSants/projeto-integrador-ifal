@@ -44,7 +44,6 @@ document.getElementById("menu-logout").addEventListener("click", async (e) => {
     } catch (err) { alert("Erro ao tentar deslogar do servidor."); }
 });
 
-// INTERFACE ANIMAÇÃO HAMBURGER E GESTÃO DE LINKS ATIVOS (RED COLOR)
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 
@@ -53,13 +52,11 @@ hamburger.addEventListener('click', () => {
     navMenu.classList.toggle('active');
 });
 
-// Captura cliques nas opções para fechar o menu e aplicar o destaque vermelho ativo
 document.querySelectorAll('#nav-menu a').forEach(link => {
     link.addEventListener('click', function() {
         hamburger.classList.remove('open');
         navMenu.classList.remove('active');
         
-        // Remove a classe ativa de todos os links e atribui apenas ao selecionado
         document.querySelectorAll('#nav-menu a').forEach(item => item.classList.remove('active-link'));
         this.classList.add('active-link');
     });
@@ -104,7 +101,6 @@ async function fetchWorkers() {
     }
 }
 
-// Injetado fallback visual caso w.avg_rating retorne Nulo ou indefinido
 function renderGroup(workers, targetContainer, textElement, message, currentCity) {
     targetContainer.innerHTML = "";
     textElement.innerText = `${workers.length} ${message}`;
@@ -179,3 +175,24 @@ document.querySelectorAll(".sector-card").forEach(card => {
 loadCities();
 checkSession();
 fetchWorkers();
+
+// ADIÇÃO EXCLUSIVA E TOTALMENTE INTEGRADA: Lógica Smart Header Retrátil
+let lastScrollTop = 0;
+const headerElement = document.querySelector("header");
+
+window.addEventListener("scroll", () => {
+    let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    const isMobileMenuOpen = document.getElementById("hamburger")?.classList.contains("open");
+
+    if (isMobileMenuOpen) {
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        return;
+    }
+
+    if (currentScroll > lastScrollTop && currentScroll > 80) {
+        headerElement.classList.add("header-hidden");
+    } else {
+        headerElement.classList.remove("header-hidden");
+    }
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+});

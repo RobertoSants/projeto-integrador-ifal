@@ -14,8 +14,7 @@
 }
 
 .profile-pic { 
-    width: 200px; 
-    height: 200px; 
+    width: 200px; height: 200px; 
     border-radius: 8px; 
     background-size: cover; 
     background-position: center; 
@@ -25,6 +24,11 @@
 .profile-info { 
     flex: 1; 
     min-width: 300px; 
+}
+
+/* ATUALIZAÇÃO CRUCIAL: Exibir a Apresentação Profissional final estruturada respeitando as quebras de linha da IA */
+#profile-content p {
+    white-space: pre-line;
 }
 
 .review-box { 
@@ -97,12 +101,23 @@
     margin-left: 8px; 
 }
 
-/* Marcação de cor vermelha ativa para os links do menu */
 nav a.active-link {
     color: var(--cor-al-red-primary) !important;
 }
 
-/* Animação estrutural de carregamento das seções de dados */
+/* FEEDBACK VISUAL: Efeito entorno suave vermelho ao passar o cursor (Hover) */
+nav a {
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background var(--transicao-padrao), box-shadow var(--transicao-padrao), color var(--transicao-padrao);
+}
+
+nav a:hover {
+    color: var(--cor-al-red-primary);
+    background-color: rgba(211, 47, 47, 0.04);
+    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.12);
+}
+
 #profile-content, .review-box {
     animation: slideInContent 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -118,7 +133,6 @@ nav a.active-link {
     }
 }
 
-/* TRANSICAO CASCATA MENU MOBILE (UX) */
 @media (max-width: 768px) {
     nav {
         display: flex;
@@ -134,10 +148,7 @@ nav a.active-link {
         box-shadow: 0 10px 15px rgba(0,0,0,0.1);
         border-bottom: 0 solid var(--cor-al-red-primary);
         gap: 0;
-        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                    opacity 0.3s ease, 
-                    padding 0.3s ease,
-                    visibility 0.3s;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease, visibility 0.3s;
     }
 
     nav.active {
@@ -154,7 +165,8 @@ nav a.active-link {
         opacity: 0;
         transform: translateY(-10px);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-        width: 100%;
+        width: 90%;
+        margin: 0 auto;
         text-align: center;
     }
 

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Worker
 from services.serializers import ServiceCategorySerializer
 from services.models import ServiceCategory
+from datetime import date
 
 class WorkerListSerializer(serializers.ModelSerializer):
     avg_rating = serializers.FloatField(read_only=True)
@@ -32,10 +33,11 @@ class WorkerListSerializer(serializers.ModelSerializer):
 class WorkerDetailSerializer(serializers.ModelSerializer):
     services = ServiceCategorySerializer(many=True, read_only=True)
     photo_url = serializers.SerializerMethodField()
+    age = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Worker
-        fields = ["id", "user", "full_name", "bio", "phone", "city", "state", "photo", "photo_url", "services", "avg_rating", "created_at"]
+        fields = ["id", "user", "full_name", "birth_date", "age", "bio", "phone", "city", "state", "photo", "photo_url", "services", "avg_rating", "created_at"]
 
     def get_photo_url(self, obj):
         if not obj.photo:
@@ -56,13 +58,19 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = ["full_name", "bio", "phone", "city", "state", "photo", "services"]
+        fields = ["full_name", "birth_date", "bio", "phone", "city", "state", "photo", "services"]
+
+    def validate_birth_date(self, value):
+        today = date.today()
+        age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
+        if age < 18:
+            raise serializers.ValidationError("É obrigatório ter mais de 18 anos para anunciar serviços na plataforma.")
+        return value
 
     def validate_phone(self, value):
-        # REGEX DE SEGURANÇA: Remove caracteres especiais temporariamente para avaliar se há entre 10 e 11 números puros
         clean_phone = re.sub(r"\D", "", value)
         if not (10 <= len(clean_phone) <= 11):
-            raise serializers.ValidationError("O telefone deve conter um formato regional válido com DDD (Ex: 82999990000).")
+            raise serializers.ValidationError("O telefone deve conter um formato regional válido com DDD.")
         return clean_phone
 
     def create(self, validated_data):

@@ -79,6 +79,11 @@ header {
     z-index: 1000;
     box-shadow: var(--sombra-header);
     border-bottom: 5px solid var(--cor-al-blue-primary);
+    transition: transform 0.3s ease-in-out;
+}
+
+header.header-hidden {
+    transform: translateY(-100%);
 }
 
 .logo {
@@ -110,7 +115,6 @@ nav a:hover {
     color: var(--cor-al-red-primary);
 }
 
-/* MELHORIA UX: Botão hambúrguer com animação CSS nativa */
 .hamburger {
     display: none;
     cursor: pointer;
@@ -131,7 +135,6 @@ nav a:hover {
     display: block;
 }
 
-/* Classes de transformação para o formato 'X' */
 .hamburger.open span:nth-child(1) {
     transform: translateY(9px) rotate(45deg);
 }
@@ -281,6 +284,11 @@ footer p {
     text-align: left;
     position: relative;
     border-bottom: 4px solid var(--cor-al-blue-primary);
+}
+
+/* ATUALIZAÇÃO RELEVANTE: Suporte a parágrafos estruturados nos cards caso usem IA */
+.card .card-body p {
+    white-space: pre-line;
 }
 
 .card-local {

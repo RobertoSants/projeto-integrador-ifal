@@ -103,7 +103,6 @@ document.getElementById('review-form').addEventListener('submit', async (e) => {
     } catch (err) { alert("Erro de rede ao submeter comentário."); }
 });
 
-// INTERFACE: Controle visual ativo das rotas e animação do hambúrguer
 if (hamburger) {
     hamburger.addEventListener('click', () => {
         hamburger.classList.toggle('open');
@@ -121,10 +120,30 @@ document.querySelectorAll('#nav-menu a').forEach(link => {
     });
 });
 
-// Aplica a marcação vermelha se o link atual bater com a URL de Perfil
 const currentPath = window.location.pathname;
 if(currentPath.includes("perfil.html")) {
     document.getElementById("menu-perfil").classList.add("active-link");
 }
 
 loadProfile();
+
+// ADIÇÃO EXCLUSIVA E TOTALMENTE INTEGRADA: Lógica Smart Header Retrátil
+let lastScrollTop = 0;
+const headerElement = document.querySelector("header");
+
+window.addEventListener("scroll", () => {
+    let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    const isMobileMenuOpen = document.getElementById("hamburger")?.classList.contains("open");
+
+    if (isMobileMenuOpen) {
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        return;
+    }
+
+    if (currentScroll > lastScrollTop && currentScroll > 80) {
+        headerElement.classList.add("header-hidden");
+    } else {
+        headerElement.classList.remove("header-hidden");
+    }
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+});

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ESTILOS PAINEL DO USUÁRIO (PERFIL)
+   ESTILOS PAINEL DO USUÁRIO (PERFIL) — CORREÇÃO DE ANIMAÇÃO CASCATA
    ========================================================================== */
 
 .auth-container { 
@@ -21,6 +21,11 @@
     border-radius: 8px; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
     margin-bottom: 25px; 
+}
+
+/* ATUALIZAÇÃO CRUCIAL: Exibir a biografia editável respeitando as quebras de linha enviadas pela IA */
+#edit-bio {
+    white-space: pre-line;
 }
 
 .btn-danger { 
@@ -46,17 +51,74 @@
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
+/* FEEDBACK VISUAL: Efeito entorno suave vermelho ao passar o cursor (Hover) */
+nav a {
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background var(--transicao-padrao), box-shadow var(--transicao-padrao), color var(--transicao-padrao);
+}
+
+nav a:hover {
+    color: var(--cor-al-red-primary);
+    background-color: rgba(211, 47, 47, 0.04);
+    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.12);
+}
+
 @media (max-width: 768px) {
     .container { width: 95%; padding: 0; }
     .panel-section { padding: 20px; }
     .hamburger { display: flex; }
+    
+    /* UNIFICAÇÃO DA ANIMAÇÃO: Menu mobile oculto com propriedades de transição idênticas à Home */
     nav { 
-        display: none; 
+        display: flex; 
         flex-direction: column; 
         position: absolute; 
         top: 100%; left: 0; width: 100%; 
         background: white; 
         box-shadow: 0 10px 10px rgba(0,0,0,0.1); 
+        padding: 0;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        visibility: hidden;
+        border-bottom: 0 solid var(--cor-al-red-primary);
+        gap: 0;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    padding 0.3s ease,
+                    visibility 0.3s;
     }
-    nav.active { display: flex !important; }
+    
+    /* Estado ativo do menu expansível mobile */
+    nav.active { 
+        display: flex !important; 
+        max-height: 250px;
+        opacity: 1;
+        padding: 20px 0;
+        visibility: visible;
+        border-bottom: 5px solid var(--cor-al-red-primary);
+        gap: 15px;
+    }
+
+    /* Efeito de transição cascata suave para os links */
+    nav a {
+        width: 90%;
+        margin: 0 auto;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(-15px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    color 0.2s ease;
+    }
+
+    nav.active a {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Delays sequenciais idênticos à Home */
+    nav.active a:nth-child(1) { transition-delay: 0.05s; }
+    nav.active a:nth-child(2) { transition-delay: 0.12s; }
 }

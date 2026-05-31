@@ -6,17 +6,7 @@
     <title>Painel do Usuário - Banco de Talentos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/global.css">
-    <style>
-        .auth-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 450px; margin: 60px auto; }
-        .logo { cursor: pointer; }
-        .hidden { display: none !important; }
-        .panel-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .btn-danger { background: var(--cor-al-red-primary) !important; box-shadow: 0 5px 0 var(--cor-al-red-dark) !important; }
-        @media (max-width: 768px) {
-            .container { width: 95%; padding: 0; }
-            .panel-section { padding: 20px; }
-        }
-    </style>
+    <link rel="stylesheet" href="styles/perfil.css">
 </head>
 <body>
 
@@ -26,7 +16,7 @@
             <span></span><span></span><span></span>
         </button>
         <nav id="nav-menu">
-            <a href="index.html">← HOME</a>
+            <a href="index.html">HOME</a>
             <a href="#" id="panel-logout" class="hidden" style="color:var(--cor-al-red-primary)">ENCERRAR SESSÃO</a>
         </nav>
     </header>
@@ -35,15 +25,15 @@
         
         <div id="login-gate" class="auth-container">
             <h2 style="color: var(--cor-al-blue-primary); margin-bottom: 10px;">Acessar Minha Conta</h2>
-            <p style="color:#666; margin-bottom: 20px; font-size:14px;">Insira suas credenciais de acesso para gerenciar o seu perfil profissional e atualizar seus dados.</p>
+            <p style="color:#666; margin-bottom: 20px; font-size:14px;">Insira suas credenciais de acesso para gerenciar o seu perfil.</p>
             <form id="gate-login-form">
                 <div class="form-group">
-                    <label for="gate-username">Usuário (Login)</label>
-                    <input type="text" id="gate-username" required placeholder="Ex: jose_pedreiro">
+                    <label for="gate-username">Usuário</label>
+                    <input type="text" id="gate-username" required placeholder="Ex: jose_pedreiro" autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="gate-password">Senha</label>
-                    <input type="password" id="gate-password" required placeholder="Sua senha de acesso">
+                    <input type="password" id="gate-password" required placeholder="Sua senha de acesso" autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn-cta" style="width: 100%; border: none; margin-top: 10px;">ENTRAR NO PAINEL</button>
             </form>
@@ -51,14 +41,18 @@
 
         <div id="main-panel" class="hidden">
             <h1 style="color: var(--cor-al-blue-primary); margin-bottom: 5px;">Painel Administrativo</h1>
-            <p class="subtitle" id="panel-subtitle">Atualize suas informações públicas ou altere seus parâmetros de acesso.</p>
+            <p class="subtitle" id="panel-subtitle">Atualize suas informações.</p>
 
             <div class="panel-section" id="worker-data-section">
-                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados Profissionais Públicos</h3>
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;" id="worker-section-title">Meus Dados Profissionais</h3>
                 <form id="update-profile-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="edit-name">Nome Completo</label>
                         <input type="text" id="edit-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-birth-date">Data de Nascimento</label>
+                        <input type="date" id="edit-birth-date">
                     </div>
                     <div class="form-group">
                         <label for="edit-phone">Telefone / WhatsApp</label>
@@ -68,34 +62,58 @@
                         <label for="edit-worker-city">Sua Cidade de Atuação</label>
                         <select id="edit-worker-city"></select>
                     </div>
+                    
+                    <div class="form-group hidden" id="group-edit-service">
+                        <label for="edit-service">Eixo Setorial Principal</label>
+                        <select id="edit-service">
+                            <option value="" disabled selected>Selecione sua categoria...</option>
+                            <option value="1">Produção Rural</option>
+                            <option value="2">Construção</option>
+                            <option value="3">Artesanato</option>
+                            <option value="4">Logística</option>
+                        </select>
+                    </div>
+
                     <div class="form-group">
-                        <label for="edit-photo">Substituir Foto de Perfil (Opcional)</label>
-                        <input type="file" id="edit-photo" accept="image/*" style="padding:10px 0;">
+                        <label for="edit-photo">Foto de Perfil (Opcional)</label>
+                        <input type="file" id="edit-photo" accept="image/*">
                     </div>
                     <div class="form-group">
-                        <label for="edit-bio">Sua Biografia Profissional</label>
-                        <textarea id="edit-bio" rows="5"></textarea>
+                        <label for="edit-bio">Biografia Profissional</label>
+                        <textarea id="edit-bio" rows="5" placeholder="Fale do seu jeito sobre o que você sabe fazer..."></textarea>
+                        
+                        <div class="ai-container" style="margin-top: 15px;">
+                            <div class="ai-header">
+                                <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                                <button type="button" class="btn-ai" id="btn-edit-optimize">Melhorar meu Texto com IA</button>
+                            </div>
+                            <div class="ai-preview" id="edit-ai-preview"></div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-cta" id="btn-save" style="border:none;">SALVAR DADOS PROFISSIONAIS</button>
+                    <button type="submit" class="btn-cta" id="btn-save">SALVAR DADOS</button>
                 </form>
             </div>
 
             <div class="panel-section">
-                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados de Conta (Contratante)</h3>
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Dados de Conta</h3>
                 <form id="update-account-form">
                     <div class="form-group">
-                        <label for="edit-first-name">Seu Nome / Apelido</label>
-                        <input type="text" id="edit-first-name" required placeholder="Ex: Maria">
+                        <label for="edit-username">Nome de Usuário (Login)</label>
+                        <input type="text" id="edit-username" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit-email">E-mail Cadastrado</label>
-                        <input type="email" id="edit-email" required>
+                        <label for="edit-email">E-mail</label>
+                        <input type="email" id="edit-email" required autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label for="edit-account-city">Sua Cidade de Residência/Filtro</label>
+                        <label for="edit-account-city">Cidade de Residência</label>
                         <select id="edit-account-city" required></select>
                     </div>
-                    <button type="submit" class="btn-cta" id="btn-save-account" style="border:none; background-color: var(--cor-al-blue-primary); box-shadow: 0 5px 0 var(--cor-al-blue-dark);">ATUALIZAR MEUS DADOS GERAIS</button>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
+                        <button type="submit" class="btn-cta" id="btn-save-account" style="flex: 1; min-width: 200px;">ATUALIZAR DADOS</button>
+                        <button type="button" class="btn-cta btn-danger" id="btn-delete-account" style="flex: 1; min-width: 200px; background-color: var(--cor-al-red-primary); box-shadow: 0 5px 0 var(--cor-al-red-dark);">EXCLUIR MINHA CONTA</button>
+                    </div>
                 </form>
             </div>
 
@@ -104,242 +122,19 @@
                 <form id="change-password-form">
                     <div class="form-group">
                         <label for="pass-old">Senha Atual</label>
-                        <input type="password" id="pass-old" required placeholder="Digite a senha usada hoje">
+                        <input type="password" id="pass-old" required placeholder="Digite a senha usada hoje" autocomplete="current-password">
                     </div>
                     <div class="form-group">
                         <label for="pass-new">Nova Senha</label>
-                        <input type="password" id="pass-new" required placeholder="Mínimo de 8 caracteres">
+                        <input type="password" id="pass-new" required placeholder="Mínimo de 8 caracteres" autocomplete="new-password">
                     </div>
                     <button type="submit" class="btn-cta btn-danger" id="btn-pass" style="border:none; background-color: var(--cor-al-red-primary); box-shadow: 0 5px 0 var(--cor-al-red-dark);">ATUALIZAR SENHA</button>
                 </form>
             </div>
+
         </div>
     </div>
 
-    <script>
-        let currentProfileId = null;
-        const loginGate = document.getElementById("login-gate");
-        const mainPanel = document.getElementById("main-panel");
-        const logoutNav = document.getElementById("panel-logout");
-        const workerSection = document.getElementById("worker-data-section");
-        const subtitleTxt = document.getElementById("panel-subtitle");
-
-        document.getElementById("edit-phone").addEventListener("input", function(e) {
-            let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-            e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
-        });
-
-        async function loadCities() {
-            try {
-                const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/AL/municipios?ordenar=nome");
-                const cities = await response.json();
-                
-                const selectWorker = document.getElementById("edit-worker-city");
-                const selectAccount = document.getElementById("edit-account-city");
-                
-                selectWorker.innerHTML = '<option value="" disabled selected>Escolha sua cidade...</option>';
-                selectAccount.innerHTML = '<option value="" disabled selected>Escolha sua cidade...</option>';
-                
-                cities.forEach(c => {
-                    const opt1 = document.createElement("option");
-                    opt1.value = c.nome;
-                    opt1.innerText = c.nome;
-                    selectWorker.appendChild(opt1);
-
-                    const opt2 = document.createElement("option");
-                    opt2.value = c.nome;
-                    opt2.innerText = c.nome;
-                    selectAccount.appendChild(opt2);
-                });
-            } catch (e) { console.error("Erro ao carregar municípios", e); }
-        }
-
-        async function fetchMyProfile() {
-            try {
-                const accountResponse = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
-                if (!accountResponse.ok) {
-                    showLoginGate();
-                    return;
-                }
-                
-                const userData = await accountResponse.json();
-                document.getElementById("edit-email").value = userData.email || ""; 
-                document.getElementById("edit-first-name").value = userData.first_name || ""; 
-                document.getElementById("edit-account-city").value = userData.city || "";
-
-                const response = await fetch("http://localhost:8000/api/workers/me/", { method: "GET", credentials: "include" });
-                
-                if (response.status === 404) {
-                    subtitleTxt.innerText = "Painel exclusivo para Contratantes. Monitore suas credenciais de acesso abaixo.";
-                    workerSection.classList.add("hidden");
-                    
-                    document.getElementById("edit-name").required = false;
-                    document.getElementById("edit-phone").required = false;
-                    document.getElementById("edit-worker-city").required = false;
-                    document.getElementById("edit-bio").required = false;
-                } else if (response.ok) {
-                    subtitleTxt.innerText = "Atualize suas informações públicas ou altere seus parâmetros de acesso.";
-                    workerSection.classList.remove("hidden");
-                    
-                    document.getElementById("edit-name").required = true;
-                    document.getElementById("edit-phone").required = true;
-                    document.getElementById("edit-worker-city").required = true;
-                    document.getElementById("edit-bio").required = true;
-
-                    const myProfile = await response.json();
-                    currentProfileId = myProfile.id;
-                    
-                    document.getElementById("edit-name").value = myProfile.full_name;
-                    document.getElementById("edit-phone").value = myProfile.phone;
-                    document.getElementById("edit-phone").dispatchEvent(new Event('input'));
-                    document.getElementById("edit-worker-city").value = myProfile.city;
-                    document.getElementById("edit-bio").value = myProfile.bio || "";
-                }
-                
-                loginGate.classList.add("hidden");
-                mainPanel.classList.remove("hidden");
-                logoutNav.classList.remove("hidden");
-            } catch(e) {
-                showLoginGate();
-            }
-        }
-
-        function showLoginGate() {
-            mainPanel.classList.add("hidden");
-            logoutNav.classList.add("hidden");
-            loginGate.classList.remove("hidden");
-        }
-
-        // SUPORTE AO MENU MOBILE EM PERFIL.HTML
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('open');
-                navMenu.classList.toggle('active');
-            });
-        }
-
-        document.getElementById("gate-login-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const username = document.getElementById("gate-username").value.trim();
-            const password = document.getElementById("gate-password").value;
-
-            try {
-                const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password })
-                });
-
-                if (loginRes.ok) {
-                    setTimeout(async () => {
-                        await fetchMyProfile();
-                    }, 150);
-                } else { alert("Usuário ou senha incorretos."); }
-            } catch(err) { alert("Erro de comunicação com o servidor."); }
-        });
-
-        logoutNav.addEventListener("click", async (e) => {
-            e.preventDefault();
-            try {
-                const res = await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
-                if (res.ok) { window.location.href = "index.html"; }
-            } catch (err) { alert("Erro ao deslogar."); }
-        });
-
-        document.getElementById("update-account-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btnAcc = document.getElementById("btn-save-account");
-            btnAcc.innerText = "Salvando...";
-            
-            const emailVal = document.getElementById("edit-email").value.trim();
-            const firstNameVal = document.getElementById("edit-first-name").value.trim();
-            const cityVal = document.getElementById("edit-account-city").value;
-
-            try {
-                const userRes = await fetch("http://localhost:8000/api/accounts/me/", {
-                    method: "PUT",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: emailVal, first_name: firstNameVal, city: cityVal, state: "AL" })
-                });
-                if(userRes.ok) { 
-                    alert("Dados de Conta atualizados com sucesso!"); 
-                    await fetchMyProfile();
-                } 
-                else { alert("Erro ao atualizar dados. Verifique se o e-mail já está em uso."); }
-            } catch (err) { alert("Erro de comunicação."); }
-            finally { btnAcc.innerText = "ATUALIZAR MEUS DADOS GERAIS"; }
-        });
-
-        document.getElementById("update-profile-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btnSave = document.getElementById("btn-save");
-            btnSave.innerText = "Salvando...";
-            
-            try {
-                const formData = new FormData();
-                formData.append("full_name", document.getElementById("edit-name").value);
-                const cleanPhone = document.getElementById("edit-phone").value.replace(/\D/g, "");
-                formData.append("phone", cleanPhone);
-                formData.append("city", document.getElementById("edit-worker-city").value);
-                formData.append("bio", document.getElementById("edit-bio").value);
-                
-                const photoInput = document.getElementById("edit-photo");
-                if(photoInput.files.length > 0) {
-                    formData.append("photo", photoInput.files[0]);
-                }
-
-                const res = await fetch(`http://localhost:8000/api/workers/${currentProfileId}/`, {
-                    method: "PUT",
-                    credentials: "include",
-                    body: formData
-                });
-                
-                if(res.ok) {
-                    alert("Suas informações profissionais foram salvas!");
-                    window.location.href = "index.html";
-                } else { alert("Erro ao processar alterações de perfil no servidor."); }
-            } catch(err) { alert("Erro de rede com o backend."); }
-            finally { btnSave.innerText = "SALVAR DADOS PROFISSIONAIS"; }
-        });
-
-        document.getElementById("change-password-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btnPass = document.getElementById("btn-pass");
-            const old_password = document.getElementById("pass-old").value;
-            const new_password = document.getElementById("pass-new").value;
-            
-            if (new_password.length < 8 || !/[A-Za-z]/.test(new_password) || !/[0-9]/.test(new_password)) {
-                alert("A nova senha deve conter no mínimo 8 caracteres, incluindo letras e números.");
-                return;
-            }
-            
-            btnPass.innerText = "Atualizando...";
-
-            try {
-                const res = await fetch("http://localhost:8000/api/accounts/password/change/", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ old_password, new_password })
-                });
-                
-                if (res.ok) {
-                    alert("Senha alterada com sucesso! Faça login novamente.");
-                    await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
-                    window.location.reload();
-                } else {
-                    const data = await res.json();
-                    alert(`Erro: ${data.error || "Dados inválidos ou senha atual incorreta."}`);
-                }
-            } catch (err) { alert("Erro de comunicação de segurança."); }
-            finally { btnPass.innerText = "ATUALIZAR SENHA"; }
-        });
-
-        loadCities().then(() => fetchMyProfile());
-    </script>
+    <script src="js/perfil.js"></script>
 </body>
 </html>
