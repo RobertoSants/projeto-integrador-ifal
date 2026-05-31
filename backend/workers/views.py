@@ -80,9 +80,20 @@ class WorkerListCreateView(APIView):
 
 
 class OptimizeBioView(APIView):
+    """
+    POST /api/workers/optimize-bio/
+    Body : {"bio": "<rascunho bruto>"}
+    200  : {"optimized_bio": "<texto aprimorado>"}
+    400  : {"error": "O campo 'bio' é obrigatório e não pode estar vazio."}
+
+    Aberto sem autenticação (AllowAny) para facilitar testes integrados.
+    O método `_process_bio` é o ponto de injeção das bibliotecas de NLP —
+    substitua sua implementação sem alterar a assinatura da view.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        # --- extração e validação do payload ---
         raw_bio = ""
         name = ""
         age = ""
