@@ -1,0 +1,62 @@
+/* ==========================================================================
+   ESTILOS PAINEL DO USUÁRIO (PERFIL)
+   ========================================================================== */
+
+.auth-container { 
+    background: white; 
+    padding: 40px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    max-width: 450px; 
+    margin: 60px auto; 
+}
+
+.logo { cursor: pointer; }
+
+.hidden { display: none !important; }
+
+.panel-section { 
+    background: white; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    margin-bottom: 25px; 
+}
+
+.btn-danger { 
+    background: var(--cor-al-red-primary) !important; 
+    box-shadow: 0 5px 0 var(--cor-al-red-dark) !important; 
+}
+
+.hamburger { 
+    display: none; 
+    flex-direction: column; 
+    gap: 6px; 
+    cursor: pointer; 
+}
+
+.hamburger span { 
+    width: 28px; 
+    height: 3px; 
+    background: var(--cor-al-blue-primary); 
+    transition: 0.3s; 
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+    .container { width: 95%; padding: 0; }
+    .panel-section { padding: 20px; }
+    .hamburger { display: flex; }
+    nav { 
+        display: none; 
+        flex-direction: column; 
+        position: absolute; 
+        top: 100%; left: 0; width: 100%; 
+        background: white; 
+        box-shadow: 0 10px 10px rgba(0,0,0,0.1); 
+    }
+    nav.active { display: flex !important; }
+}

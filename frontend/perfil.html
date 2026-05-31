@@ -12,13 +12,20 @@
         .hidden { display: none !important; }
         .panel-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         .btn-danger { background: var(--cor-al-red-primary) !important; box-shadow: 0 5px 0 var(--cor-al-red-dark) !important; }
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 0; }
+            .panel-section { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo" onclick="window.location.href='index.html'">TALENTOS <span>ALAGOAS</span></div>
-        <nav>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
             <a href="index.html">← HOME</a>
             <a href="#" id="panel-logout" class="hidden" style="color:var(--cor-al-red-primary)">ENCERRAR SESSÃO</a>
         </nav>
@@ -44,26 +51,22 @@
 
         <div id="main-panel" class="hidden">
             <h1 style="color: var(--cor-al-blue-primary); margin-bottom: 5px;">Painel Administrativo</h1>
-            <p class="subtitle">Atualize suas informações públicas ou altere seus parâmetros de acesso.</p>
+            <p class="subtitle" id="panel-subtitle">Atualize suas informações públicas ou altere seus parâmetros de acesso.</p>
 
-            <div class="panel-section">
-                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados Profissionais</h3>
+            <div class="panel-section" id="worker-data-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados Profissionais Públicos</h3>
                 <form id="update-profile-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="edit-name">Nome Completo</label>
-                        <input type="text" id="edit-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-email">E-mail de Contato</label>
-                        <input type="email" id="edit-email" required>
+                        <input type="text" id="edit-name">
                     </div>
                     <div class="form-group">
                         <label for="edit-phone">Telefone / WhatsApp</label>
-                        <input type="tel" id="edit-phone" required placeholder="(82) 99999-0000" maxlength="15">
+                        <input type="tel" id="edit-phone" placeholder="(82) 99999-0000" maxlength="15">
                     </div>
                     <div class="form-group">
-                        <label for="edit-city">Sua Cidade Atual</label>
-                        <select id="edit-city" required></select>
+                        <label for="edit-worker-city">Sua Cidade de Atuação</label>
+                        <select id="edit-worker-city"></select>
                     </div>
                     <div class="form-group">
                         <label for="edit-photo">Substituir Foto de Perfil (Opcional)</label>
@@ -71,9 +74,28 @@
                     </div>
                     <div class="form-group">
                         <label for="edit-bio">Sua Biografia Profissional</label>
-                        <textarea id="edit-bio" rows="5" required></textarea>
+                        <textarea id="edit-bio" rows="5"></textarea>
                     </div>
-                    <button type="submit" class="btn-cta" id="btn-save" style="border:none;">SALVAR DADOS</button>
+                    <button type="submit" class="btn-cta" id="btn-save" style="border:none;">SALVAR DADOS PROFISSIONAIS</button>
+                </form>
+            </div>
+
+            <div class="panel-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Meus Dados de Conta (Contratante)</h3>
+                <form id="update-account-form">
+                    <div class="form-group">
+                        <label for="edit-first-name">Seu Nome / Apelido</label>
+                        <input type="text" id="edit-first-name" required placeholder="Ex: Maria">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">E-mail Cadastrado</label>
+                        <input type="email" id="edit-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-account-city">Sua Cidade de Residência/Filtro</label>
+                        <select id="edit-account-city" required></select>
+                    </div>
+                    <button type="submit" class="btn-cta" id="btn-save-account" style="border:none; background-color: var(--cor-al-blue-primary); box-shadow: 0 5px 0 var(--cor-al-blue-dark);">ATUALIZAR MEUS DADOS GERAIS</button>
                 </form>
             </div>
 
@@ -88,7 +110,7 @@
                         <label for="pass-new">Nova Senha</label>
                         <input type="password" id="pass-new" required placeholder="Mínimo de 8 caracteres">
                     </div>
-                    <button type="submit" class="btn-cta btn-danger" id="btn-pass" style="border:none;">ATUALIZAR SENHA</button>
+                    <button type="submit" class="btn-cta btn-danger" id="btn-pass" style="border:none; background-color: var(--cor-al-red-primary); box-shadow: 0 5px 0 var(--cor-al-red-dark);">ATUALIZAR SENHA</button>
                 </form>
             </div>
         </div>
@@ -99,6 +121,8 @@
         const loginGate = document.getElementById("login-gate");
         const mainPanel = document.getElementById("main-panel");
         const logoutNav = document.getElementById("panel-logout");
+        const workerSection = document.getElementById("worker-data-section");
+        const subtitleTxt = document.getElementById("panel-subtitle");
 
         document.getElementById("edit-phone").addEventListener("input", function(e) {
             let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
@@ -109,12 +133,23 @@
             try {
                 const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/AL/municipios?ordenar=nome");
                 const cities = await response.json();
-                const select = document.getElementById("edit-city");
+                
+                const selectWorker = document.getElementById("edit-worker-city");
+                const selectAccount = document.getElementById("edit-account-city");
+                
+                selectWorker.innerHTML = '<option value="" disabled selected>Escolha sua cidade...</option>';
+                selectAccount.innerHTML = '<option value="" disabled selected>Escolha sua cidade...</option>';
+                
                 cities.forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c.nome;
-                    opt.innerText = c.nome;
-                    select.appendChild(opt);
+                    const opt1 = document.createElement("option");
+                    opt1.value = c.nome;
+                    opt1.innerText = c.nome;
+                    selectWorker.appendChild(opt1);
+
+                    const opt2 = document.createElement("option");
+                    opt2.value = c.nome;
+                    opt2.innerText = c.nome;
+                    selectAccount.appendChild(opt2);
                 });
             } catch (e) { console.error("Erro ao carregar municípios", e); }
         }
@@ -122,40 +157,67 @@
         async function fetchMyProfile() {
             try {
                 const accountResponse = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
-                if (!accountResponse.ok) throw new Error("Não autenticado.");
+                if (!accountResponse.ok) {
+                    showLoginGate();
+                    return;
+                }
                 
                 const userData = await accountResponse.json();
-                
+                document.getElementById("edit-email").value = userData.email || ""; 
+                document.getElementById("edit-first-name").value = userData.first_name || ""; 
+                document.getElementById("edit-account-city").value = userData.city || "";
+
                 const response = await fetch("http://localhost:8000/api/workers/me/", { method: "GET", credentials: "include" });
                 
                 if (response.status === 404) {
-                    alert("Sua conta de acesso foi identificada, mas você ainda não publicou seu perfil profissional. Redirecionando para a página de anúncio.");
-                    window.location.href = "cadastro.html";
-                    return;
-                }
+                    subtitleTxt.innerText = "Painel exclusivo para Contratantes. Monitore suas credenciais de acesso abaixo.";
+                    workerSection.classList.add("hidden");
+                    
+                    document.getElementById("edit-name").required = false;
+                    document.getElementById("edit-phone").required = false;
+                    document.getElementById("edit-worker-city").required = false;
+                    document.getElementById("edit-bio").required = false;
+                } else if (response.ok) {
+                    subtitleTxt.innerText = "Atualize suas informações públicas ou altere seus parâmetros de acesso.";
+                    workerSection.classList.remove("hidden");
+                    
+                    document.getElementById("edit-name").required = true;
+                    document.getElementById("edit-phone").required = true;
+                    document.getElementById("edit-worker-city").required = true;
+                    document.getElementById("edit-bio").required = true;
 
-                if (!response.ok) throw new Error("Erro ao coletar dados do perfil.");
-                
-                const myProfile = await response.json();
-                currentProfileId = myProfile.id;
-                
-                document.getElementById("edit-name").value = myProfile.full_name;
-                document.getElementById("edit-email").value = userData.email || ""; 
-                document.getElementById("edit-phone").value = myProfile.phone;
-                
-                document.getElementById("edit-phone").dispatchEvent(new Event('input'));
-                
-                document.getElementById("edit-city").value = myProfile.city;
-                document.getElementById("edit-bio").value = myProfile.bio || "";
+                    const myProfile = await response.json();
+                    currentProfileId = myProfile.id;
+                    
+                    document.getElementById("edit-name").value = myProfile.full_name;
+                    document.getElementById("edit-phone").value = myProfile.phone;
+                    document.getElementById("edit-phone").dispatchEvent(new Event('input'));
+                    document.getElementById("edit-worker-city").value = myProfile.city;
+                    document.getElementById("edit-bio").value = myProfile.bio || "";
+                }
                 
                 loginGate.classList.add("hidden");
                 mainPanel.classList.remove("hidden");
                 logoutNav.classList.remove("hidden");
             } catch(e) {
-                mainPanel.classList.add("hidden");
-                logoutNav.classList.add("hidden");
-                loginGate.classList.remove("hidden");
+                showLoginGate();
             }
+        }
+
+        function showLoginGate() {
+            mainPanel.classList.add("hidden");
+            logoutNav.classList.add("hidden");
+            loginGate.classList.remove("hidden");
+        }
+
+        // SUPORTE AO MENU MOBILE EM PERFIL.HTML
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navMenu.classList.toggle('active');
+            });
         }
 
         document.getElementById("gate-login-form").addEventListener("submit", async (e) => {
@@ -172,7 +234,9 @@
                 });
 
                 if (loginRes.ok) {
-                    fetchMyProfile();
+                    setTimeout(async () => {
+                        await fetchMyProfile();
+                    }, 150);
                 } else { alert("Usuário ou senha incorretos."); }
             } catch(err) { alert("Erro de comunicação com o servidor."); }
         });
@@ -185,32 +249,42 @@
             } catch (err) { alert("Erro ao deslogar."); }
         });
 
-        document.getElementById("update-profile-form").addEventListener("submit", async (e) => {
+        document.getElementById("update-account-form").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const btnSave = document.getElementById("btn-save");
-            btnSave.innerText = "Salvando...";
+            const btnAcc = document.getElementById("btn-save-account");
+            btnAcc.innerText = "Salvando...";
             
             const emailVal = document.getElementById("edit-email").value.trim();
-            
+            const firstNameVal = document.getElementById("edit-first-name").value.trim();
+            const cityVal = document.getElementById("edit-account-city").value;
+
             try {
                 const userRes = await fetch("http://localhost:8000/api/accounts/me/", {
                     method: "PUT",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: emailVal, first_name: document.getElementById("edit-name").value })
+                    body: JSON.stringify({ email: emailVal, first_name: firstNameVal, city: cityVal, state: "AL" })
                 });
-                
-                if(!userRes.ok) {
-                    alert("Erro ao atualizar o e-mail da conta de acesso. Verifique se ele já está em uso.");
-                    btnSave.innerText = "SALVAR DADOS";
-                    return;
-                }
+                if(userRes.ok) { 
+                    alert("Dados de Conta atualizados com sucesso!"); 
+                    await fetchMyProfile();
+                } 
+                else { alert("Erro ao atualizar dados. Verifique se o e-mail já está em uso."); }
+            } catch (err) { alert("Erro de comunicação."); }
+            finally { btnAcc.innerText = "ATUALIZAR MEUS DADOS GERAIS"; }
+        });
 
+        document.getElementById("update-profile-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById("btn-save");
+            btnSave.innerText = "Salvando...";
+            
+            try {
                 const formData = new FormData();
                 formData.append("full_name", document.getElementById("edit-name").value);
                 const cleanPhone = document.getElementById("edit-phone").value.replace(/\D/g, "");
                 formData.append("phone", cleanPhone);
-                formData.append("city", document.getElementById("edit-city").value);
+                formData.append("city", document.getElementById("edit-worker-city").value);
                 formData.append("bio", document.getElementById("edit-bio").value);
                 
                 const photoInput = document.getElementById("edit-photo");
@@ -225,11 +299,11 @@
                 });
                 
                 if(res.ok) {
-                    alert("Suas informações foram salvas com sucesso!");
+                    alert("Suas informações profissionais foram salvas!");
                     window.location.href = "index.html";
-                } else { alert("Ocorreu um erro ao processar os dados do perfil profissional no servidor."); }
+                } else { alert("Erro ao processar alterações de perfil no servidor."); }
             } catch(err) { alert("Erro de rede com o backend."); }
-            finally { btnSave.innerText = "SALVAR DADOS"; }
+            finally { btnSave.innerText = "SALVAR DADOS PROFISSIONAIS"; }
         });
 
         document.getElementById("change-password-form").addEventListener("submit", async (e) => {
@@ -246,7 +320,6 @@
             btnPass.innerText = "Atualizando...";
 
             try {
-                // CORREÇÃO CIRÚRGICA: Rota alterada para bater exatamente na URL mapeada pelo Django (/password/change/)
                 const res = await fetch("http://localhost:8000/api/accounts/password/change/", {
                     method: "POST",
                     credentials: "include",

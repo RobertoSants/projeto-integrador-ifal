@@ -110,21 +110,38 @@ nav a:hover {
     color: var(--cor-al-red-primary);
 }
 
+/* MELHORIA UX: Botão hambúrguer com animação CSS nativa */
 .hamburger {
     display: none;
     cursor: pointer;
     background: none;
     border: none;
     flex-direction: column;
-    gap: 5px;
-    z-index: 1001;
+    gap: 6px;
+    z-index: 1002;
+    padding: 5px;
 }
 
 .hamburger span {
-    width: 30px;
+    width: 28px;
     height: 3px;
     background: var(--cor-al-blue-primary);
-    transition: var(--transicao-padrao);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transform-origin: center;
+    display: block;
+}
+
+/* Classes de transformação para o formato 'X' */
+.hamburger.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
 }
 
 .btn-cta {
@@ -406,7 +423,7 @@ footer p {
    MEDIA QUERIES (RESPONSIVIDADE MOBILE E ADAPTAÇÕES DE DISPOSITIVOS)
    ========================================================================== */
 @media (max-width: 768px) {
-    header { padding: 15px 5%; }
+    header { padding: 15px 5%; position: relative; }
     .hero h1 { font-size: var(--tamanho-hero-title-mobile); }
     .hamburger { display: flex; }
 
@@ -416,12 +433,14 @@ footer p {
         position: absolute;
         top: 100%; left: 0; width: 100%;
         background: var(--cor-al-white);
-        padding: 20px 0;
+        padding: 25px 0;
         box-shadow: 0 10px 15px rgba(0,0,0,0.1);
         border-bottom: 5px solid var(--cor-al-red-primary);
+        gap: 20px;
+        text-align: center;
     }
 
-    nav.active { display: flex; }
+    nav.active { display: flex !important; }
     .search-box { grid-template-columns: 1fr; width: 90%; margin-top: -30px; }
     .container { width: 95%; padding: 20px; }
 }

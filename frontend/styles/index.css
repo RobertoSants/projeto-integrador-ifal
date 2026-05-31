@@ -1,0 +1,126 @@
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS E ANIMAÇÕES — PÁGINA PRINCIPAL (INDEX)
+   ========================================================================== */
+
+.card { 
+    cursor: pointer; 
+    transition: transform 0.2s ease; 
+}
+
+.card:hover { 
+    transform: translateY(-5px); 
+}
+
+.btn-whatsapp { 
+    background-color: #25D366 !important; 
+    color: white !important; 
+    font-weight: bold; 
+    border: none; 
+}
+
+.btn-whatsapp:hover { 
+    background-color: #128C7E !important; 
+}
+
+.capital-section { 
+    background: #f4f6f9; 
+    border-top: 2px solid #eee; 
+}
+
+.logo { 
+    cursor: pointer; 
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+#menu-logout:hover { 
+    color: var(--cor-al-red-primary) !important; 
+}
+
+.search-box {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.btn-reset {
+    background: #95a5a6 !important;
+    box-shadow: 0 5px 0 #7f8c8d !important;
+}
+
+.btn-reset:hover {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #7f8c8d !important;
+}
+
+/* CLASSE DE DESTAQUE: Ativada dinamicamente via JS para o link ativo */
+nav a.active-link {
+    color: var(--cor-al-red-primary) !important;
+}
+
+/* RESPONSIVIDADE E ADAPTAÇÕES MOBILE (UX) */
+@media (max-width: 768px) {
+    .search-box {
+        grid-template-columns: 1fr;
+        width: 90%;
+        margin: -30px auto 0;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; 
+        left: 0; 
+        width: 100%;
+        background: var(--cor-al-white);
+        padding: 0; /* Começa zerado para a animação de clipping ou opacidade */
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        visibility: hidden;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        border-bottom: 0 solid var(--cor-al-red-primary);
+        gap: 0;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    padding 0.3s ease,
+                    visibility 0.3s;
+    }
+
+    /* Estado ativo do menu expansível mobile */
+    nav.active {
+        display: flex !important;
+        max-height: 400px;
+        opacity: 1;
+        padding: 25px 0;
+        visibility: visible;
+        border-bottom: 5px solid var(--cor-al-red-primary);
+        gap: 20px;
+    }
+
+    /* Efeito de transição cascata (Slide-in / Fade-in) para os links */
+    nav a {
+        opacity: 0;
+        transform: translateY(-15px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    color 0.2s ease;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav.active a {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Delays calculados para a cascata de opções dinâmicas */
+    nav.active a:nth-child(1) { transition-delay: 0.05s; }
+    nav.active a:nth-child(2) { transition-delay: 0.10s; }
+    nav.active a:nth-child(3) { transition-delay: 0.15s; }
+    nav.active a:nth-child(4) { transition-delay: 0.20s; }
+    nav.active a:nth-child(5) { transition-delay: 0.25s; }
+    nav.active a:nth-child(6) { transition-delay: 0.30s; }
+    nav.active a:nth-child(7) { transition-delay: 0.35s; }
+}

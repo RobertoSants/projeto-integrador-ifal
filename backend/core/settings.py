@@ -47,7 +47,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware", # Gerencia políticas de CORS
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware", # Proteção ativa contra CSRF
+    "django.middleware.csrf.CsrfViewMiddleware", # Proteção activa contra CSRF
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware", # Bloqueia Clickjacking
@@ -130,7 +130,7 @@ SIMPLE_JWT = {
     "AUTH_COOKIE": "access_token",
     "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS ativa
     "AUTH_COOKIE_SECURE": False,     # OBRIGATÓRIO False para permitir tráfego local sem HTTPS
-    "AUTH_COOKIE_SAMESITE": "Lax",   # Permite o tráfego local contanto que usemos o mesmo host no navegador
+    "AUTH_COOKIE_SAMESITE": "Lax",   
 }
 
 # [SEGURANÇA] Controle estrito de Origens do CORS para as portas do Live Server

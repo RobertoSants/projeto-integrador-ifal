@@ -1,0 +1,82 @@
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS E ANIMAÇÕES — TELA DE CADASTRO (CADASTRO)
+   ========================================================================== */
+
+.radio-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-top: 15px; 
+    margin-bottom: 20px; 
+}
+
+.radio-option { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    background: var(--cor-bg-main); 
+    padding: 12px 15px; 
+    border: 1px solid var(--cor-border-dark); 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background var(--transicao-padrao), border-color var(--transicao-padrao); 
+}
+
+.radio-option:hover { 
+    border-color: var(--cor-al-blue-primary); 
+    background: var(--cor-card-hover-bg); 
+}
+
+/* Realce visual instantâneo se a opção de marcar estiver ativa */
+.radio-option input:checked + label {
+    color: var(--cor-al-blue-primary);
+}
+
+.radio-option input:checked {
+    accent-color: var(--cor-al-blue-primary);
+}
+
+.radio-option input { 
+    cursor: pointer; 
+    width: 18px; 
+    height: 18px; 
+}
+
+.radio-option label { 
+    cursor: pointer; 
+    font-weight: 600; 
+    color: var(--cor-text-main); 
+    font-size: 14px; 
+    transition: color var(--transicao-padrao);
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+/* Animação de transição suave de fade-in ao alternar os passos do formulário */
+.form-step {
+    animation: fadeInStep 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInStep {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .container { 
+        width: 95%; 
+        padding: 20px; 
+        margin: 20px auto; 
+    }
+    form { 
+        gap: 15px; 
+    }
+}
