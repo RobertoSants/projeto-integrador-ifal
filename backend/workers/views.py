@@ -85,17 +85,21 @@ class OptimizeBioView(APIView):
     POST /api/workers/optimize-bio/
     Body : {"bio": "<rascunho bruto>"}
     200  : {"optimized_bio": "<texto aprimorado>"}
-    422  : {"error": "O campo 'bio' é obrigatório..."}
+    400  : {"error": "O campo 'bio' é obrigatório..."}
     """
     permission_classes = [AllowAny]
 
     def post(self, request):
-        raw_bio: str = (request.data.get("bio") or "").strip()
+        raw_bio = ""
+        if isinstance(request.data, dict):
+            raw_bio = str(request.data.get("bio", "") or "").strip()
+        else:
+            raw_bio = str(request.data or "").strip()
 
         if not raw_bio:
             return Response(
                 {"error": "O campo 'bio' é obrigatório e não pode estar vazio."},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         optimized_bio = self._call_gemini(raw_bio)
