@@ -143,7 +143,7 @@ async function submitAccountOnly() {
         });
         if (!regRes.ok) { 
             const errData = await regRes.json();
-            alert(`Erro no registro: ${errData.email || errData.username}`); 
+            alert(`Erro no registro: ${errData.email || errData.username || "Dados inválidos."}`); 
             return; 
         }
         const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
@@ -152,8 +152,8 @@ async function submitAccountOnly() {
             body: JSON.stringify({ username, password })
         });
         if (loginRes.ok) {
-            alert("Conta criada com sucesso!");
-            window.location.replace("index.html");
+            alert("Sua conta de Contratante foi criada com sucesso!");
+            window.location.assign("index.html");
         }
     } catch (err) { alert("Erro de rede com o servidor."); }
 }
@@ -173,7 +173,6 @@ btnPrevStep.addEventListener('click', () => {
     step1.style.display = "block";
 });
 
-// MOTOR IA ATUALIZADO: Passa nome e idade calculada dinamicamente para o backend
 btnOptimize.addEventListener('click', async () => {
     const rawBioVal = rawBio.value.trim();
     const nameVal = document.getElementById("name").value.trim();
@@ -200,6 +199,9 @@ btnOptimize.addEventListener('click', async () => {
         });
         const data = await response.json();
         finalBio = data.optimized_bio;
+        
+        document.getElementById("raw-bio").value = finalBio;
+        
         aiPreview.innerHTML = `<strong>✨ Biografia Otimizada:</strong><br>${finalBio}`;
         aiPreview.style.display = 'block';
         btnOptimize.innerText = 'Texto Otimizado!';
@@ -208,6 +210,8 @@ btnOptimize.addEventListener('click', async () => {
 
 document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+
     const city = document.getElementById("city").value;
     const full_name = document.getElementById("name").value.trim();
     const birth_date = document.getElementById("birth_date").value;
@@ -216,7 +220,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     const bioText = finalBio || rawBio.value.trim();
 
     if (!full_name || !birth_date || !phone || !city || !service || !bioText) {
-        alert("Por favor, preencha todos os campos obrigatórios.");
+        alert("Por favor, preencha todos os campos obrigatórios do perfil profissional.");
         return;
     }
 
@@ -230,14 +234,16 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
             const username = document.getElementById("username").value.trim();
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
-            const consentimento = document.getElementById("consentimento").checked;
 
             const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password, password_confirm: password, city, state: "AL", consentimento, first_name: full_name })
+                body: JSON.stringify({ username, email, password, password_confirm: password, city, state: "AL", consentimento: true, first_name: full_name })
             });
-            if (!regRes.ok) return;
+            if (!regRes.ok) {
+                alert("Erro ao criar conta de acesso.");
+                return;
+            }
             await fetch("http://localhost:8000/api/auth/login/", {
                 method: "POST", credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -255,12 +261,16 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
         formData.append("services", parseInt(service));
         
         const photoInput = document.getElementById("photo");
-        if (photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
+        if (photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
 
         const workerRes = await fetch("http://localhost:8000/api/workers/", { method: "POST", credentials: "include", body: formData });
+        
         if (workerRes.ok) {
-            alert("Perfil publicado com sucesso!");
-            window.location.replace("index.html");
+            alert("Perfil profissional publicado com sucesso! Redirecionando...");
+            window.location.assign("index.html");
+        } else {
+            const errDetail = await workerRes.json();
+            alert(`Erro ao registrar os dados profissionais: ${JSON.stringify(errDetail)}`);
         }
     } catch (err) { alert("Erro de rede com o servidor."); }
 });

@@ -8,7 +8,6 @@ User = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)
-    # REQUISITO DE SEGURANÇA: E-mail obrigatório e único em nível de serializador
     email = serializers.EmailField(required=True)
     city = serializers.CharField(required=True, allow_blank=False)
     state = serializers.CharField(required=True, allow_blank=False, max_length=2)
@@ -26,7 +25,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data["password"] != data["password_confirm"]:
             raise serializers.ValidationError({"password": "As senhas não coincidem."})
         
-        # POLÍTICA DE SENHAS PROFISSIONAIS: Mínimo de 8 caracteres, pelo menos uma letra e um número
         password = data["password"]
         if len(password) < 8:
             raise serializers.ValidationError({"password": "A senha deve conter no mínimo 8 caracteres."})
@@ -48,6 +46,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "city", "state", "first_name"]
+
+    def validate_username(self, value):
+        # Validação dinâmica de unicidade de login durante edições parciais
+        user = self.context['request'].user if 'request' in self.context else None
+        if User.objects.filter(username__iexact=value).exclude(pk=user.pk if user else None).exists():
+            raise serializers.ValidationError("Este nome de usuário já está em uso por outra conta.")
+        return value
 
 
 class ChangePasswordSerializer(serializers.Serializer):

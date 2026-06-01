@@ -32,18 +32,20 @@ async function loadProfile() {
             ? parseFloat(w.avg_rating).toFixed(2) 
             : '5.00';
 
+        // INJEÇÃO DA PROPRIEDADE DADOS DE IDADE (w.age) EM NÍVEL VISUAL DE CARD
         profileContent.innerHTML = `
             <div class="profile-pic" style="background-image: url('${w.photo_url ? w.photo_url : defaultImg}')"></div>
             <div class="profile-info">
                 <span class="card-local" style="position:static; display:inline-block; margin-bottom:10px;">📍 MUNICÍPIO: ${w.city.toUpperCase()}</span>
-                <h1 style="margin: 0 0 10px 0; color: var(--cor-al-blue-primary);">${w.full_name}</h1>
+                <h1 style="margin: 0; color: var(--cor-al-blue-primary);">${w.full_name}</h1>
+                <p style="font-size:14px; color:#666; margin: 2px 0 12px 0;"><strong>Idade:</strong> ${w.age} anos</p>
                 <p style="font-size:16px; color:#444; margin-bottom:15px;"><strong>Eixo de Atuação:</strong> ${setores}</p>
                 <p style="font-size:18px; color:var(--cor-al-red-primary); margin-bottom:20px;"><strong>Reputação:</strong> ⭐ ${ratingTxt}</p>
                 <div style="border-top:1px solid #eee; padding-top:15px; margin-bottom:25px;">
                     <h3>Apresentação Profissional:</h3>
                     <p style="line-height:1.6; color:#555;">${w.bio || 'Nenhuma biografia informada.'}</p>
                 </div>
-                <a href="https://wa.me/${w.phone}" target="_blank" class="btn-cta btn-whatsapp" style="display:inline-block; text-align:center; box-shadow:none;">CONTACTAR VIA WHATSAPP</a>
+                <a href="https://wa.me/55${w.phone}" target="_blank" class="btn-cta btn-whatsapp" style="display:inline-block; text-align:center; box-shadow:none;">CONTACTAR VIA WHATSAPP</a>
             </div>
         `;
         
@@ -127,7 +129,6 @@ if(currentPath.includes("perfil.html")) {
 
 loadProfile();
 
-// ADIÇÃO EXCLUSIVA E TOTALMENTE INTEGRADA: Lógica Smart Header Retrátil
 let lastScrollTop = 0;
 const headerElement = document.querySelector("header");
 

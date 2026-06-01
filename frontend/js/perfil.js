@@ -1,11 +1,11 @@
 /* ==========================================================================
-   LÓGICA DO PAINEL DO USUÁRIO - MÓDULO PERFIL
+   LÓGICA DO PAINEL DO USUÁRIO - MÓDULO PERFIL — VERSÃO BLINDADA CONTRA CRASH
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
     let currentProfileId = null;
     let finalBio = "";
-    let isWorker = false; 
+    let isWorker = false; // Controla se é atualização (PUT) ou criação (POST)
     
     const loginGate = document.getElementById("login-gate");
     const mainPanel = document.getElementById("main-panel");
@@ -54,56 +54,63 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!accountResponse.ok) { showLoginGate(); return; }
             
             const userData = await accountResponse.json();
-            document.getElementById("edit-email").value = userData.email || ""; 
-            document.getElementById("edit-username").value = userData.username || ""; // Puxa o username real
-            document.getElementById("edit-account-city").value = userData.city || "";
+            
+            // OPERADORES DE CHECAGEM SEGURA (?): Evitam o crash se o elemento sumir do HTML
+            if (document.getElementById("edit-email")) document.getElementById("edit-email").value = userData.email || ""; 
+            if (document.getElementById("edit-username")) document.getElementById("edit-username").value = userData.username || ""; 
+            if (document.getElementById("edit-account-city")) document.getElementById("edit-account-city").value = userData.city || "";
+            if (document.getElementById("edit-first-name")) document.getElementById("edit-first-name").value = userData.first_name || "";
 
             const response = await fetch("http://localhost:8000/api/workers/me/", { method: "GET", credentials: "include" });
             
             if (response.status === 404) {
                 isWorker = false;
-                subtitleTxt.innerText = "Sua conta de Contratante está activa. Se desejar, ative seu perfil profissional abaixo para anunciar serviços.";
-                workerSection.classList.remove("hidden");
-                workerTitleElement.innerText = "✨ Ativar Meu Perfil de Trabalhador";
-                groupEditService.classList.remove("hidden"); 
-                document.getElementById("edit-service").required = true;
-                btnSaveWorker.innerText = "CONFIRMAR E ATIVAR PERFIL PROFISSIONAL";
+                if (subtitleTxt) subtitleTxt.innerText = "Sua conta de Contratante está ativa. Se desejar, ative seu perfil profissional abaixo para anunciar serviços.";
+                if (workerSection) workerSection.classList.remove("hidden");
+                if (workerTitleElement) workerTitleElement.innerText = "✨ Ativar Meu Perfil de Trabalhador";
+                if (groupEditService) groupEditService.classList.remove("hidden"); 
+                if (document.getElementById("edit-service")) document.getElementById("edit-service").required = true;
+                if (btnSaveWorker) btnSaveWorker.innerText = "CONFIRMAR E ATIVAR PERFIL PROFISSIONAL";
             } else if (response.ok) {
                 isWorker = true;
-                subtitleTxt.innerText = "Atualize suas informações públicas ou altere seus parâmetros de acesso.";
-                workerSection.classList.remove("hidden");
-                workerTitleElement.innerText = "Meus Dados Profissionais";
-                groupEditService.classList.add("hidden"); 
-                document.getElementById("edit-service").required = false;
-                btnSaveWorker.innerText = "SALVAR DADOS PROFISSIONAIS";
+                if (subtitleTxt) subtitleTxt.innerText = "Atualize suas informações públicas ou altere seus parâmetros de acesso.";
+                if (workerSection) workerSection.classList.remove("hidden");
+                if (workerTitleElement) workerTitleElement.innerText = "Meus Dados Profissionais";
+                if (groupEditService) groupEditService.classList.add("hidden"); 
+                if (document.getElementById("edit-service")) document.getElementById("edit-service").required = false;
+                if (btnSaveWorker) btnSaveWorker.innerText = "SALVAR DADOS PROFISSIONAIS";
                 
                 const myProfile = await response.json();
                 currentProfileId = myProfile.id;
-                document.getElementById("edit-name").value = myProfile.full_name;
-                document.getElementById("edit-birth-date").value = myProfile.birth_date || "";
-                document.getElementById("edit-phone").value = myProfile.phone;
-                document.getElementById("edit-phone").dispatchEvent(new Event('input'));
-                document.getElementById("edit-worker-city").value = myProfile.city;
-                document.getElementById("edit-bio").value = myProfile.bio || "";
+                if (document.getElementById("edit-name")) document.getElementById("edit-name").value = myProfile.full_name || "";
+                if (document.getElementById("edit-birth-date")) document.getElementById("edit-birth-date").value = myProfile.birth_date || "";
+                if (document.getElementById("edit-phone")) {
+                    document.getElementById("edit-phone").value = myProfile.phone || "";
+                    document.getElementById("edit-phone").dispatchEvent(new Event('input'));
+                }
+                if (document.getElementById("edit-worker-city")) document.getElementById("edit-worker-city").value = myProfile.city || "";
+                if (document.getElementById("edit-bio")) document.getElementById("edit-bio").value = myProfile.bio || "";
             }
             
-            loginGate.classList.add("hidden");
-            mainPanel.classList.remove("hidden");
-            logoutNav.classList.remove("hidden");
-        } catch(e) { showLoginGate(); }
+            if (loginGate) loginGate.classList.add("hidden");
+            if (mainPanel) mainPanel.classList.remove("hidden");
+            if (logoutNav) logoutNav.classList.remove("hidden");
+        } catch(e) { 
+            console.error("Erro ao carregar o painel:", e);
+            showLoginGate(); 
+        }
     }
 
     function showLoginGate() {
-        mainPanel.classList.add("hidden");
-        logoutNav.classList.add("hidden");
-        loginGate.classList.remove("hidden");
+        if (mainPanel) mainPanel.classList.add("hidden");
+        if (logoutNav) logoutNav.classList.add("hidden");
+        if (loginGate) loginGate.classList.remove("hidden");
     }
 
-    // BOTÃO IA AJUSTADO: Agora injeta o texto expandido e espaçado sem cortes
     document.getElementById("btn-edit-optimize")?.addEventListener("click", async () => {
-        const rawBioVal = document.getElementById("edit-bio").value.trim();
-        const nameVal = document.getElementById("edit-name").value.trim();
-        const birthVal = document.getElementById("edit-birth-date").value;
+        const rawBioVal = document.getElementById("edit-bio")?.value.trim();
+        const nameVal = document.getElementById("edit-name")?.value.trim();
+        const birthVal = document.getElementById("edit-birth-date")?.value;
         const aiPreview = document.getElementById("edit-ai-preview");
         const btnAi = document.getElementById("btn-edit-optimize");
 
@@ -126,11 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             finalBio = data.optimized_bio;
             
-            // Sincroniza a resposta diretamente no campo de texto para evitar cortes na hora de salvar
-            document.getElementById("edit-bio").value = finalBio;
+            if (document.getElementById("edit-bio")) document.getElementById("edit-bio").value = finalBio;
             
-            aiPreview.innerHTML = `<strong>✨ Biografia Otimizada com Sucesso:</strong><br>${finalBio}`;
-            aiPreview.style.display = "block";
+            if (aiPreview) {
+                aiPreview.innerHTML = `<strong>✨ Biografia Otimizada com Sucesso:</strong><br>${finalBio}`;
+                aiPreview.style.display = "block";
+            }
             btnAi.innerText = "Texto Otimizado!";
         } catch (e) { btnAi.innerText = "Erro na IA"; }
     });
@@ -145,8 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
             });
-            if (loginRes.ok) setTimeout(fetchMyProfile, 150);
-            else alert("Usuário ou senha incorretos.");
+            if (loginRes.ok) {
+                // Aguarda o cookie assentar e dispara o painel administrativo
+                setTimeout(fetchMyProfile, 100);
+            } else {
+                alert("Usuário ou senha incorretos.");
+            }
         } catch(err) { alert("Erro de comunicação."); }
     });
 
@@ -173,13 +185,13 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) { alert("Erro de rede com o servidor backend."); }
     });
 
-    // FORMULÁRIO DE CONTA ATUALIZADO: Altera o username e valida duplicidade
     document.getElementById("update-account-form")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const btnAcc = document.getElementById("btn-save-account");
         const usernameInput = document.getElementById("edit-username").value.trim();
         const emailInput = document.getElementById("edit-email").value.trim();
         const cityInput = document.getElementById("edit-account-city").value;
+        const firstNameInput = document.getElementById("edit-first-name") ? document.getElementById("edit-first-name").value.trim() : usernameInput;
 
         btnAcc.innerText = "Salvando...";
         try {
@@ -189,7 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ 
                     username: usernameInput,
                     email: emailInput, 
-                    city: cityInput, state: "AL" 
+                    city: cityInput, 
+                    first_name: firstNameInput,
+                    state: "AL" 
                 })
             });
             
@@ -209,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("update-profile-form")?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const btnSave = document.getElementById("btn-save");
         const birthDate = document.getElementById("edit-birth-date").value;
 
         if (calculateAge(birthDate) < 18) {
@@ -217,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        btnSave.innerText = "Salvando...";
+        if (btnSaveWorker) btnSaveWorker.innerText = "Salvando...";
         try {
             const formData = new FormData();
             formData.append("full_name", document.getElementById("edit-name").value);
@@ -227,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append("bio", document.getElementById("edit-bio").value.trim());
             
             const photoInput = document.getElementById("edit-photo");
-            if(photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
+            if(photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
 
             let url = `http://localhost:8000/api/workers/${currentProfileId}/`;
             let method = "PUT";
@@ -245,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "index.html"; 
             } else { alert("Erro ao salvar os dados profissionais."); }
         } catch(err) { alert("Erro de rede com o backend."); }
-        finally { btnSave.innerText = isWorker ? "SALVAR DADOS PROFISSIONAIS" : "CONFIRMAR E ATIVAR PERFIL PROFISSIONAL"; }
+        finally { if (btnSaveWorker) btnSaveWorker.innerText = isWorker ? "SALVAR DADOS PROFISSIONAIS" : "CONFIRMAR E ATIVAR PERFIL PROFISSIONAL"; }
     });
 
     document.getElementById("change-password-form")?.addEventListener("submit", async (e) => {
