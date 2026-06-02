@@ -4,6 +4,7 @@
 
 let isAlreadyLogged = false;
 let finalBio = "";
+let base64Photo = ""; // Armazena a string Base64 da foto processada
 
 const btnOptimize = document.getElementById('btn-optimize');
 const rawBio = document.getElementById('raw-bio');
@@ -21,6 +22,26 @@ const navMenu = document.getElementById('nav-menu');
 document.getElementById("phone").addEventListener("input", function(e) {
     let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
     e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+});
+
+// Listener exclusivo para escutar o upload, validar tamanho (1.5MB) e converter para Base64
+document.getElementById("photo")?.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validação estrita de tamanho: 1.5 MB = 1572864 bytes
+    if (file.size > 1572864) {
+        alert("⚠️ Arquivo muito pesado! Selecione uma foto de perfil menor com no máximo 1.5 MB.");
+        e.target.value = "";
+        base64Photo = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = function() {
+        base64Photo = reader.result; // Salva a string Base64 completa pronta para o banco
+    };
+    reader.readAsDataURL(file);
 });
 
 async function loadCities() {
@@ -251,19 +272,24 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
             });
         }
 
-        const formData = new FormData();
-        formData.append("full_name", full_name);
-        formData.append("birth_date", birth_date);
-        formData.append("phone", phone.replace(/\D/g, ""));
-        formData.append("city", city);
-        formData.append("state", "AL");
-        formData.append("bio", bioText);
-        formData.append("services", parseInt(service));
-        
-        const photoInput = document.getElementById("photo");
-        if (photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
+        // Envio estruturado via JSON contendo a string de texto Base64 da foto
+        const payload = {
+            full_name: full_name,
+            birth_date: birth_date,
+            phone: phone.replace(/\D/g, ""),
+            city: city,
+            state: "AL",
+            bio: bioText,
+            services: [parseInt(service)],
+            photo: base64Photo // String de texto gravada no banco
+        };
 
-        const workerRes = await fetch("https://banco-talentos-api.onrender.com/api/workers/", { method: "POST", credentials: "include", body: formData });
+        const workerRes = await fetch("https://banco-talentos-api.onrender.com/api/workers/", { 
+            method: "POST", 
+            credentials: "include", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload) 
+        });
         
         if (workerRes.ok) {
             alert("Perfil profissional publicado com sucesso! Redirecionando...");

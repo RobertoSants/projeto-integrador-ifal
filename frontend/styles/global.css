@@ -417,14 +417,33 @@ footer p {
    MEDIA QUERIES (RESPONSIVIDADE MOBILE E ADAPTAÇÕES DE DISPOSITIVOS)
    ========================================================================== */
 @media (max-width: 768px) {
+    body {
+        /* Empurra todo o conteúdo das páginas para baixo, impedindo que o header fixed oculte os títulos */
+        padding-top: 75px; 
+    }
+
     header { 
         padding: 15px 5%; 
-        position: fixed; /* Força o header a ficar fixado para permitir retração mobile */
+        position: fixed;
         width: 100%;
         top: 0;
+        left: 0;
     }
-    .hero h1 { font-size: var(--tamanho-hero-title-mobile); }
-    .hamburger { display: flex; }
+
+    /* Ajuste de escala e centralização perfeita do brasão de Alagoas no Hero Mobile */
+    .hero {
+        height: 70vh; /* Reduz a altura vertical para não esticar a imagem */
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                    url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') center/cover no-repeat;
+    }
+
+    .hero h1 { 
+        font-size: var(--tamanho-hero-title-mobile); 
+    }
+
+    .hamburger { 
+        display: flex; 
+    }
 
     nav {
         display: none;
@@ -439,11 +458,23 @@ footer p {
         text-align: center;
     }
 
-    nav.active { display: flex !important; }
-    .search-box { grid-template-columns: 1fr; width: 90%; margin-top: -30px; }
-    .container { width: 95%; padding: 20px; }
+    nav.active { 
+        display: flex !important; 
+    }
 
-    /* Estilização exclusiva do botão flutuante para Mobile e Tablet */
+    .search-box { 
+        grid-template-columns: 1fr; 
+        width: 90%; 
+        margin: -40px auto 0; /* Suaviza a sobreposição sobre o Hero */
+    }
+
+    /* Corrige o espaçamento superior específico das caixas de formulário/painel */
+    .container { 
+        width: 95%; 
+        padding: 25px 20px; 
+        margin: 20px auto; 
+    }
+
     #btn-back-to-top {
         display: block;
         position: fixed;

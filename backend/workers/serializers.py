@@ -22,12 +22,8 @@ class WorkerListSerializer(serializers.ModelSerializer):
         return False
 
     def get_photo_url(self, obj):
-        if not obj.photo:
-            return None
-        request = self.context.get("request")
-        if request:
-            return request.build_absolute_uri(obj.photo.url)
-        return obj.photo.url
+        # Retorna a string Base64 direta guardada no campo photo
+        return obj.photo if obj.photo else None
 
 
 class WorkerDetailSerializer(serializers.ModelSerializer):
@@ -37,15 +33,10 @@ class WorkerDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = ["id", "user", "full_name", "birth_date", "age", "bio", "phone", "city", "state", "photo", "photo_url", "services", "avg_rating", "created_at"]
+        fields = ["id", "user", "full_name", "birth_date", "age", "bio", "phone", "city", "state", "photo_url", "services", "avg_rating", "created_at"]
 
     def get_photo_url(self, obj):
-        if not obj.photo:
-            return None
-        request = self.context.get("request")
-        if request:
-            return request.build_absolute_uri(obj.photo.url)
-        return obj.photo.url
+        return obj.photo if obj.photo else None
 
 
 class WorkerCreateSerializer(serializers.ModelSerializer):
@@ -55,6 +46,7 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
         required=True,
         allow_empty=False,
     )
+    photo = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Worker
@@ -62,9 +54,9 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
 
     def validate_birth_date(self, value):
         today = date.today()
-        age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
+        age = today.year - value.year - ((today.month, today.day) < (value.year, value.day))
         if age < 18:
-            raise serializers.ValidationError("É obrigatório ter mais de 18 anos para anunciar serviços na plataforma.")
+            raise serializers.ValidationError("É obrigatório ter mais de 18 anos para anunciar serviços.")
         return value
 
     def validate_phone(self, value):
