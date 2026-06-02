@@ -8,3 +8,4 @@ psycopg2-binary>=2.9
 Pillow>=10.0
 pytest>=8.0
 pytest-django>=4.8
+gunicorn>=23.0.0
