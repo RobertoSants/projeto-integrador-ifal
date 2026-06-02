@@ -3,11 +3,9 @@ Repositório oficial para o desenvolvimento do Projeto Integrador (PINT1123 - 20
 Professor: Leonardo Melo de Medeiros
 
 ### Equipe e Funções:
-- Roberto dos Santos: Lider Técnico, Gerente de Projeto e Engenheiro de Qualidade
-- João Victhor: Desenvolvedor Backend
+- Roberto dos Santos: Líder Técnico, Gerente de Projeto, Desenvolvedor Front-end e Engenheiro de Qualidade
+- João Victhor: Desenvolvedor Backend e Banco de Dados
 - Wallex Kaua: Desenvolvedor Front-end
-- Thiago Luiz: Desenvolvedor Front-end
-- Leonardo Ferro: Banco de Dados
 - Marcelo Feitoza: Desenvolvedor de IA (NLP)
 - Joberval Magalhães: Tester / QA
 
