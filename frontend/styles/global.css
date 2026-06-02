@@ -2,14 +2,12 @@
    ATALHOS E VARIÁVEIS GLOBAIS (DESIGN SYSTEM - BANDEIRA DE ALAGOAS)
    ========================================================================== */
 :root {
-    /* Paleta de Cores Coesas */
     --cor-al-blue-primary: #003399;
     --cor-al-blue-dark: #002266;
     --cor-al-red-primary: #d32f2f;
     --cor-al-red-dark: #9e2020;
     --cor-al-white: #ffffff;
     
-    /* Cores de Suporte e Estados */
     --cor-bg-main: #f8f9fa;
     --cor-text-main: #2d3436;
     --cor-text-muted: #666666;
@@ -17,11 +15,9 @@
     --cor-border-dark: #ddd5d5;
     --cor-card-hover-bg: #f0f4ff;
 
-    /* Diretrizes Tipográficas */
     --fonte-titulos: 'Montserrat', sans-serif;
     --fonte-base: 'Inter', sans-serif;
     
-    /* Escala de Dimensionamento de Texto */
     --tamanho-hero-title: 3.5rem;
     --tamanho-hero-title-mobile: 2.2rem;
     --tamanho-section-title: 28px;
@@ -30,13 +26,11 @@
     --tamanho-muted: 14px;
     --tamanho-badge: 11px;
 
-    /* Pesos de Fontes */
     --peso-regular: 400;
     --peso-semibold: 600;
     --peso-bold: 700;
     --peso-black: 800;
 
-    /* Transições Estilizadas e Elevações */
     --transicao-padrao: 0.3s ease;
     --sombra-header: 0 2px 15px rgba(0, 0, 0, 0.1);
     --sombra-card: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -44,9 +38,6 @@
     --sombra-container: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* ==========================================================================
-   RESETS E COMPORTAMENTOS BASE DO NAVEGADOR
-   ========================================================================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -65,9 +56,6 @@ h1, h2, h3, .logo {
     font-family: var(--fonte-titulos);
 }
 
-/* ==========================================================================
-   COMPONENTES CORE REUTILIZÁVEIS E COMPARTILHADOS
-   ========================================================================== */
 header {
     display: flex;
     justify-content: space-between;
@@ -179,9 +167,6 @@ footer p {
     opacity: 0.7;
 }
 
-/* ==========================================================================
-   INTERFACES DA PÁGINA PRINCIPAL E GRID DE CONSULTAS
-   ========================================================================== */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
                 url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') center/cover;
@@ -286,7 +271,6 @@ footer p {
     border-bottom: 4px solid var(--cor-al-blue-primary);
 }
 
-/* ATUALIZAÇÃO RELEVANTE: Suporte a parágrafos estruturados nos cards caso usem IA */
 .card .card-body p {
     white-space: pre-line;
 }
@@ -332,9 +316,6 @@ footer p {
     font-weight: var(--peso-bold);
 }
 
-/* ==========================================================================
-   ESTILOS ESPECÍFICOS DO FORMULÁRIO DE PERSISTÊNCIA (TRABALHADOR / CONTA)
-   ========================================================================== */
 .container {
     max-width: 700px;
     margin: 50px auto;
@@ -427,11 +408,21 @@ footer p {
     display: none;
 }
 
+/* Ocultação nativa do botão Voltar ao Topo em telas Grandes (Desktop) */
+#btn-back-to-top {
+    display: none;
+}
+
 /* ==========================================================================
    MEDIA QUERIES (RESPONSIVIDADE MOBILE E ADAPTAÇÕES DE DISPOSITIVOS)
    ========================================================================== */
 @media (max-width: 768px) {
-    header { padding: 15px 5%; position: relative; }
+    header { 
+        padding: 15px 5%; 
+        position: fixed; /* Força o header a ficar fixado para permitir retração mobile */
+        width: 100%;
+        top: 0;
+    }
     .hero h1 { font-size: var(--tamanho-hero-title-mobile); }
     .hamburger { display: flex; }
 
@@ -451,4 +442,34 @@ footer p {
     nav.active { display: flex !important; }
     .search-box { grid-template-columns: 1fr; width: 90%; margin-top: -30px; }
     .container { width: 95%; padding: 20px; }
+
+    /* Estilização exclusiva do botão flutuante para Mobile e Tablet */
+    #btn-back-to-top {
+        display: block;
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 999;
+        background-color: var(--cor-al-red-primary);
+        color: var(--cor-al-white);
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 50%;
+        font-size: 18px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+
+    #btn-back-to-top.back-to-top-hidden {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+    }
+
+    #btn-back-to-top:hover {
+        background-color: var(--cor-al-red-dark);
+    }
 }

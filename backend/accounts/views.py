@@ -8,12 +8,8 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from .serializers import RegisterSerializer, UserSerializer, ChangePasswordSerializer
 from accounts.authentication import CookieJWTAuthentication
 
-
 def _set_auth_cookies(response, access_token, refresh_token=None):
-    """
-    Refatoração (Clean Code): Centraliza a injeção de cookies para eliminar 
-    a duplicação de código (code smell: Duplicated Code) entre login e refresh.
-    """
+    """Injeta os tokens JWT nos cookies HttpOnly do cliente"""
     response.set_cookie(
         key=settings.SIMPLE_JWT["AUTH_COOKIE"],
         value=access_token,
@@ -32,7 +28,6 @@ def _set_auth_cookies(response, access_token, refresh_token=None):
             samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
         )
 
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -48,12 +43,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             _set_auth_cookies(response, access_token, refresh_token)
         return response
 
-
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
         
-        # Se não houver cookie, o usuário está deslogado. Retorna 204 para o front não mostrar erro.
         if not refresh_token:
             return Response({"detail": "Não autenticado."}, status=status.HTTP_204_NO_CONTENT)
             
@@ -67,22 +60,29 @@ class CustomTokenRefreshView(TokenRefreshView):
                 _set_auth_cookies(response, access_token)
             return response
         except Exception:
-            # Em caso de token inválido ou usuário deletado, limpa os cookies e força deslogar
             res = Response({"detail": "Sessão inválida."}, status=status.HTTP_401_UNAUTHORIZED)
-            res.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
-            res.delete_cookie("refresh_token")
+            res.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"], path="/")
+            res.delete_cookie("refresh_token", path="/")
             return res
-
 
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         response = Response({"message": "Sessão encerrada com sucesso."}, status=status.HTTP_200_OK)
-        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
-        response.delete_cookie("refresh_token")
+        
+        # Expira os cookies forçando o descarte imediato no navegador em qualquer escopo
+        response.delete_cookie(
+            settings.SIMPLE_JWT["AUTH_COOKIE"], 
+            path="/", 
+            samesite="Lax" if settings.SETTINGS_MODULE == "core.test_settings" else "None"
+        )
+        response.delete_cookie(
+            "refresh_token", 
+            path="/", 
+            samesite="Lax" if settings.SETTINGS_MODULE == "core.test_settings" else "None"
+        )
         return response
-
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -101,7 +101,6 @@ class RegisterView(APIView):
             return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
@@ -119,11 +118,10 @@ class MeView(APIView):
     def delete(self, request):
         user_to_delete = request.user
         response = Response({"message": "Conta removida com sucesso."}, status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
-        response.delete_cookie("refresh_token")
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"], path="/")
+        response.delete_cookie("refresh_token", path="/")
         user_to_delete.delete()
         return response
-
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]

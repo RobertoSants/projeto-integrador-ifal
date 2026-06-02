@@ -27,13 +27,10 @@ async function checkSession() {
     try {
         const response = await fetch("https://banco-talentos-api.onrender.com/api/auth/refresh/", { method: "POST", credentials: "include" });
         
-        // CORREÇÃO DO BUG DO REFRESH ANÔNIMO (ISSUE #11)
-        // Só exibe o menu de logout se o status for estritamente 200 (Sessão válida)
         if (response.status === 200) {
             document.getElementById("menu-logout").classList.remove("hidden");
             document.getElementById("menu-cadastrar").classList.add("hidden");
         } else {
-            // Se for 204 ou qualquer outro status anônimo, garante que os botões voltem ao estado inicial
             document.getElementById("menu-logout").classList.add("hidden");
             document.getElementById("menu-cadastrar").classList.remove("hidden");
         }
@@ -42,11 +39,13 @@ async function checkSession() {
 
 document.getElementById("menu-logout").addEventListener("click", async (e) => {
     e.preventDefault();
+    e.stopPropagation(); 
+    
     try {
         const res = await fetch("https://banco-talentos-api.onrender.com/api/auth/logout/", { method: "POST", credentials: "include" });
         if (res.ok) {
             alert("Sessão encerrada com sucesso.");
-            window.location.reload();
+            window.location.replace("index.html"); 
         }
     } catch (err) { alert("Erro ao tentar deslogar do servidor."); }
 });
@@ -63,7 +62,6 @@ document.querySelectorAll('#nav-menu a').forEach(link => {
     link.addEventListener('click', function() {
         hamburger.classList.remove('open');
         navMenu.classList.remove('active');
-        
         document.querySelectorAll('#nav-menu a').forEach(item => item.classList.remove('active-link'));
         this.classList.add('active-link');
     });
@@ -87,7 +85,6 @@ async function fetchWorkers() {
     try {
         let response = await fetch(finalUrl, { method: "GET", credentials: "include" });
         
-        // Se a sessão expirou ou o token sumiu (401), tenta buscar sem credenciais (anônimo)
         if (response.status === 401) {
             response = await fetch(finalUrl, { method: "GET", credentials: "omit" });
         }
@@ -189,9 +186,9 @@ loadCities();
 checkSession();
 fetchWorkers();
 
-// ADIÇÃO EXCLUSIVA E TOTALMENTE INTEGRADA: Lógica Smart Header Retrátil
 let lastScrollTop = 0;
 const headerElement = document.querySelector("header");
+const btnBackToTop = document.getElementById("btn-back-to-top");
 
 window.addEventListener("scroll", () => {
     let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
@@ -202,10 +199,28 @@ window.addEventListener("scroll", () => {
         return;
     }
 
+    // Gerenciamento Inteligente do Header Retrátil (Mobile e Desktop)
     if (currentScroll > lastScrollTop && currentScroll > 80) {
         headerElement.classList.add("header-hidden");
     } else {
         headerElement.classList.remove("header-hidden");
     }
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+
+    // Controle de Opacidade do Botão Voltar ao Topo (Scroll > 300px)
+    if (btnBackToTop) {
+        if (currentScroll > 300) {
+            btnBackToTop.classList.remove("back-to-top-hidden");
+        } else {
+            btnBackToTop.classList.add("back-to-top-hidden");
+        }
+    }
+});
+
+// Ação de Scroll Suave para o topo da página ao clicar no botão
+btnBackToTop?.addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 });

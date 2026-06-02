@@ -12,7 +12,6 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
-
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
@@ -28,11 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Libs de Terceiros
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    # Apps do Projeto Escopo Local
     "accounts",
     "workers",
     "services",
@@ -42,13 +39,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", # Entrega de arquivos estáticos e mídia em produção
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware", # Gerencia políticas de CORS
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware", # Proteção activa contra CSRF
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware", # Bloqueia Clickjacking
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -71,8 +69,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-# ADAPTAÇÃO INTEGRADA DE BANCO DE DADOS:
-# Lê de forma inteligente a string única em produção ou recorre aos parâmetros individuais locais.
+# Mapeamento dinâmico de banco de dados (Produção vs Local)
 DATABASE_URL = config("DATABASE_URL", default=None)
 
 if DATABASE_URL:
@@ -109,16 +106,22 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Correção essencial de Infraestrutura para o Render (Whitenoise/Nativo):
-# Permite o mapeamento correto do diretório de coleta estática em servidores de produção Linux.
 STATICFILES_DIRS = []
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# Armazenamento unificado para arquivos estáticos e de mídia via WhiteNoise
+STORAGES = {
+    "default": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 REST_FRAMEWORK = {
@@ -139,12 +142,8 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     
     "AUTH_COOKIE": "access_token",
-    "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS activa
-    "AUTH_COOKIE_SECURE": not DEBUG, # Ajustado dinamicamente: True em produção, False local
-    
-    # AJUSTE SEGURO DE PRODUÇÃO (RESOLVE O BUG 401 DE COOKIES CROSSLINKADOS):
-    # Em produção (not DEBUG), SameSite deve ser estritamente "None" para trafegar do GitHub Pages ao Render.
-    # Em desenvolvimento local (DEBUG=True), mantém "Lax" para não exigir HTTPS na máquina local.
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_SECURE": not DEBUG,
     "AUTH_COOKIE_SAMESITE": "Lax" if DEBUG else "None",   
 }
 
@@ -155,21 +154,15 @@ CORS_ALLOWED_ORIGINS = config(
     default="http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501,http://localhost:3000,http://127.0.0.1:3000",
     cast=lambda v: [s.strip() for s in v.split(",")]
 )
-CORS_ALLOW_CREDENTIALS = True # Essencial para permitir o tráfego dos cookies HttpOnly
+CORS_ALLOW_CREDENTIALS = True
 
-# [SEGURANÇA OBRIGATÓRIA PARA DEPLOY / PRODUÇÃO]
 if not DEBUG:
-    # Força redirecionamento total para HTTPS
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
-    # Cabeçalhos extras de proteção do navegador
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
-    # Proteção HTTP Strict Transport Security (HSTS)
-    SECURE_HSTS_SECONDS = 31536000 # 1 ano
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
