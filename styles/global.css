@@ -1,0 +1,454 @@
+/* ==========================================================================
+   ATALHOS E VARIÁVEIS GLOBAIS (DESIGN SYSTEM - BANDEIRA DE ALAGOAS)
+   ========================================================================== */
+:root {
+    /* Paleta de Cores Coesas */
+    --cor-al-blue-primary: #003399;
+    --cor-al-blue-dark: #002266;
+    --cor-al-red-primary: #d32f2f;
+    --cor-al-red-dark: #9e2020;
+    --cor-al-white: #ffffff;
+    
+    /* Cores de Suporte e Estados */
+    --cor-bg-main: #f8f9fa;
+    --cor-text-main: #2d3436;
+    --cor-text-muted: #666666;
+    --cor-border-light: #eeeeee;
+    --cor-border-dark: #ddd5d5;
+    --cor-card-hover-bg: #f0f4ff;
+
+    /* Diretrizes Tipográficas */
+    --fonte-titulos: 'Montserrat', sans-serif;
+    --fonte-base: 'Inter', sans-serif;
+    
+    /* Escala de Dimensionamento de Texto */
+    --tamanho-hero-title: 3.5rem;
+    --tamanho-hero-title-mobile: 2.2rem;
+    --tamanho-section-title: 28px;
+    --tamanho-card-title: 20px;
+    --tamanho-body: 15px;
+    --tamanho-muted: 14px;
+    --tamanho-badge: 11px;
+
+    /* Pesos de Fontes */
+    --peso-regular: 400;
+    --peso-semibold: 600;
+    --peso-bold: 700;
+    --peso-black: 800;
+
+    /* Transições Estilizadas e Elevações */
+    --transicao-padrao: 0.3s ease;
+    --sombra-header: 0 2px 15px rgba(0, 0, 0, 0.1);
+    --sombra-card: 0 5px 15px rgba(0, 0, 0, 0.05);
+    --sombra-box-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+    --sombra-container: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   RESETS E COMPORTAMENTOS BASE DO NAVEGADOR
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--fonte-base);
+    background-color: var(--cor-bg-main);
+    color: var(--cor-text-main);
+    scroll-behavior: smooth;
+    line-height: 1.5;
+}
+
+h1, h2, h3, .logo {
+    font-family: var(--fonte-titulos);
+}
+
+/* ==========================================================================
+   COMPONENTES CORE REUTILIZÁVEIS E COMPARTILHADOS
+   ========================================================================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 8%;
+    background: var(--cor-al-white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--sombra-header);
+    border-bottom: 5px solid var(--cor-al-blue-primary);
+    transition: transform 0.3s ease-in-out;
+}
+
+header.header-hidden {
+    transform: translateY(-100%);
+}
+
+.logo {
+    font-size: 22px;
+    color: var(--cor-al-blue-primary);
+    font-weight: var(--peso-black);
+    z-index: 1001;
+}
+
+.logo span {
+    color: var(--cor-al-red-primary);
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--cor-al-blue-primary);
+    font-size: var(--tamanho-muted);
+    font-weight: var(--peso-bold);
+    transition: var(--transicao-padrao);
+}
+
+nav a:hover {
+    color: var(--cor-al-red-primary);
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 1002;
+    padding: 5px;
+}
+
+.hamburger span {
+    width: 28px;
+    height: 3px;
+    background: var(--cor-al-blue-primary);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transform-origin: center;
+    display: block;
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+.btn-cta {
+    background: var(--cor-al-red-primary);
+    color: var(--cor-al-white);
+    padding: 18px 40px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: var(--peso-black);
+    letter-spacing: 1px;
+    box-shadow: 0 5px 0 var(--cor-al-red-dark);
+    transition: 0.2s;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cta:hover {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--cor-al-red-dark);
+}
+
+footer {
+    background: var(--cor-al-blue-primary);
+    color: var(--cor-al-white);
+    padding: 60px 10% 30px;
+    text-align: center;
+}
+
+footer p {
+    font-size: var(--tamanho-muted);
+    opacity: 0.7;
+}
+
+/* ==========================================================================
+   INTERFACES DA PÁGINA PRINCIPAL E GRID DE CONSULTAS
+   ========================================================================== */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') center/cover;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--cor-al-white);
+    padding: 0 10%;
+}
+
+.hero h1 {
+    font-size: var(--tamanho-hero-title);
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.hero h1 span {
+    color: var(--cor-al-red-primary);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 750px;
+    margin: 25px 0;
+    opacity: 0.9;
+    font-weight: var(--peso-regular);
+}
+
+.search-box {
+    background: var(--cor-al-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--sombra-box-lg);
+    margin: -60px auto 0;
+    width: 85%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    border-top: 6px solid var(--cor-al-red-primary);
+}
+
+.search-box input, .search-box select {
+    padding: 15px;
+    border: 1px solid var(--cor-border-dark);
+    border-radius: 4px;
+    font-size: var(--tamanho-muted);
+    font-family: var(--fonte-base);
+}
+
+.section {
+    padding: 80px 10%;
+    text-align: center;
+}
+
+.grid-sectors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.sector-card {
+    background: var(--cor-al-white);
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-border-light);
+    transition: var(--transicao-padrao);
+    cursor: pointer;
+}
+
+.sector-card span {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.sector-card:hover, .sector-card.active {
+    border-color: var(--cor-al-blue-primary);
+    transform: translateY(-5px);
+    background: var(--cor-card-hover-bg);
+}
+
+.talents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.card {
+    background: var(--cor-al-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--sombra-card);
+    text-align: left;
+    position: relative;
+    border-bottom: 4px solid var(--cor-al-blue-primary);
+}
+
+/* ATUALIZAÇÃO RELEVANTE: Suporte a parágrafos estruturados nos cards caso usem IA */
+.card .card-body p {
+    white-space: pre-line;
+}
+
+.card-local {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--cor-al-blue-primary);
+    color: var(--cor-al-white);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: var(--tamanho-badge);
+    font-weight: var(--peso-bold);
+    z-index: 5;
+}
+
+.card-img {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #ddd;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.card-body h3 {
+    margin: 0;
+    color: var(--cor-al-blue-primary);
+    font-size: var(--tamanho-card-title);
+}
+
+.card-body p {
+    font-size: var(--tamanho-muted);
+    color: var(--cor-text-muted);
+    margin: 10px 0;
+}
+
+.rating {
+    color: #f1c40f;
+    font-weight: var(--peso-bold);
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS DO FORMULÁRIO DE PERSISTÊNCIA (TRABALHADOR / CONTA)
+   ========================================================================== */
+.container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 40px;
+    background: var(--cor-al-white);
+    border-radius: 8px;
+    box-shadow: var(--sombra-container);
+    border-top: 6px solid var(--cor-al-red-primary);
+}
+
+.container h1 {
+    color: var(--cor-al-blue-primary);
+    margin-top: 0;
+    font-size: var(--tamanho-section-title);
+}
+
+.subtitle {
+    color: var(--cor-text-muted);
+    margin-bottom: 30px;
+    font-size: var(--tamanho-body);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: var(--peso-semibold);
+    font-size: var(--tamanho-muted);
+    color: var(--cor-al-blue-primary);
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    padding: 14px;
+    border: 1px solid var(--cor-border-dark);
+    border-radius: 4px;
+    font-size: var(--tamanho-body);
+    font-family: var(--fonte-base);
+}
+
+.ai-container {
+    background: var(--cor-card-hover-bg);
+    border: 1px dashed var(--cor-al-blue-primary);
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ai-title {
+    font-weight: var(--peso-bold);
+    color: var(--cor-al-blue-primary);
+    font-size: var(--tamanho-muted);
+}
+
+.btn-ai {
+    background: var(--cor-al-blue-primary);
+    color: var(--cor-al-white);
+    border: none;
+    padding: 8px 16px;
+    font-weight: var(--peso-bold);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transicao-padrao);
+}
+
+.btn-ai:hover {
+    background: var(--cor-al-blue-dark);
+}
+
+.ai-preview {
+    background: var(--cor-al-white);
+    border: 1px solid #ced4da;
+    padding: 12px;
+    min-height: 60px;
+    border-radius: 4px;
+    font-size: var(--tamanho-muted);
+    color: #495057;
+    line-height: 1.5;
+    display: none;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVIDADE MOBILE E ADAPTAÇÕES DE DISPOSITIVOS)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 5%; position: relative; }
+    .hero h1 { font-size: var(--tamanho-hero-title-mobile); }
+    .hamburger { display: flex; }
+
+    nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; left: 0; width: 100%;
+        background: var(--cor-al-white);
+        padding: 25px 0;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        border-bottom: 5px solid var(--cor-al-red-primary);
+        gap: 20px;
+        text-align: center;
+    }
+
+    nav.active { display: flex !important; }
+    .search-box { grid-template-columns: 1fr; width: 90%; margin-top: -30px; }
+    .container { width: 95%; padding: 20px; }
+}

@@ -1,0 +1,152 @@
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS E ANIMAÇÕES — TELA DE CADASTRO (CADASTRO)
+   ========================================================================== */
+
+.radio-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-top: 15px; 
+    margin-bottom: 20px; 
+}
+
+.radio-option { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    background: var(--cor-bg-main); 
+    padding: 12px 15px; 
+    border: 1px solid var(--cor-border-dark); 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background var(--transicao-padrao), border-color var(--transicao-padrao); 
+}
+
+.radio-option:hover { 
+    border-color: var(--cor-al-blue-primary); 
+    background: var(--cor-card-hover-bg); 
+}
+
+.radio-option input:checked + label {
+    color: var(--cor-al-blue-primary);
+}
+
+.radio-option input:checked {
+    accent-color: var(--cor-al-blue-primary);
+}
+
+.radio-option input { 
+    cursor: pointer; 
+    width: 18px; 
+    height: 18px; 
+}
+
+.radio-option label { 
+    cursor: pointer; 
+    font-weight: 600; 
+    color: var(--cor-text-main); 
+    font-size: 14px; 
+    transition: color var(--transicao-padrao);
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+/* ATUALIZAÇÃO CRUCIAL: Faz a janela de pré-visualização da IA quebrar linhas no HTML */
+.ai-preview {
+    white-space: pre-line !important;
+}
+
+/* FEEDBACK VISUAL: Efeito entorno suave vermelho ao passar o cursor (Hover) */
+nav a {
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background var(--transicao-padrao), box-shadow var(--transicao-padrao), color var(--transicao-padrao);
+}
+
+nav a:hover {
+    color: var(--cor-al-red-primary);
+    background-color: rgba(211, 47, 47, 0.04);
+    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.12);
+}
+
+/* Animação de transição suave de fade-in ao alternar os passos do formulário */
+.form-step {
+    animation: fadeInStep 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInStep {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .container { 
+        width: 95%; 
+        padding: 20px; 
+        margin: 20px auto; 
+    }
+    form { 
+        gap: 15px; 
+    }
+
+    /* UNIFICAÇÃO DA ANIMAÇÃO: Menu mobile oculto com propriedades de transição idênticas à Home */
+    nav { 
+        display: flex; 
+        flex-direction: column; 
+        position: absolute; 
+        top: 100%; left: 0; width: 100%; 
+        background: white; 
+        box-shadow: 0 10px 10px rgba(0,0,0,0.1); 
+        padding: 0;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        visibility: hidden;
+        border-bottom: 0 solid var(--cor-al-red-primary);
+        gap: 0;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    padding 0.3s ease,
+                    visibility 0.3s;
+    }
+    
+    /* Estado ativo do menu expansível mobile */
+    nav.active { 
+        display: flex !important; 
+        max-height: 250px;
+        opacity: 1;
+        padding: 20px 0;
+        visibility: visible;
+        border-bottom: 5px solid var(--cor-al-red-primary);
+        gap: 15px;
+    }
+
+    /* Efeito de transição cascata suave para os links */
+    nav a {
+        width: 90%;
+        margin: 0 auto;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(-15px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease, 
+                    color 0.2s ease;
+    }
+
+    nav.active a {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Delays sequenciais idênticos à Home */
+    nav.active a:nth-child(1) { transition-delay: 0.05s; }
+    nav.active a:nth-child(2) { transition-delay: 0.12s; }
+}

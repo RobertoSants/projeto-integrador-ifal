@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Profissional - Alagoas Regional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/cadastro.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">TALENTOS <span>ALAGOAS</span></div>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
+            <a href="index.html">HOME</a>
+            <a href="perfil.html">LOGIN</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 id="cadastro-title">Anuncie seu Trabalho</h1>
+        <p class="subtitle" id="cadastro-subtitle">Cadastre sua conta de acesso e publique seu perfil profissional para fechar contratos.</p>
+
+        <form id="register-form" enctype="multipart/form-data">
+            <div id="step-1" class="form-step">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 1: Criar Conta de Acesso</h3>
+                <div class="form-group">
+                    <label for="username">Nome de Usuário (Login)</label>
+                    <input type="text" id="username" placeholder="Ex: jose_oliveira" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail Pessoal</label>
+                    <input type="email" id="email" placeholder="Ex: jose.oliveira@gmail.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha de Segurança</label>
+                    <input type="password" id="password" placeholder="Mínimo de 8 caracteres contendo letras e números" autocomplete="new-password">
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label style="font-weight: 700;">Como você deseja utilizar a plataforma?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="role-contractor" name="user-role" value="contractor" checked>
+                            <label for="role-contractor">Sou Contratante (Quero buscar e avaliar profissionais)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="role-worker" name="user-role" value="worker">
+                            <label for="role-worker">Sou Trabalhador (Quero anunciar meus serviços autônomos)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="role-both" name="user-role" value="both">
+                            <label for="role-both">Sou Contratante e Trabalhador</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 20px;">
+                    <input type="checkbox" id="consentimento" style="margin-top: 4px; cursor: pointer;">
+                    <label for="consentimento" style="font-size: 13px; color: #555; cursor: pointer; line-height: 1.4;">
+                        Autorizo o processamento dos meus dados cadastrais e profissionais para fins de visibilidade e geração de renda na plataforma, em estrita conformidade com as diretrizes da LGPD.
+                    </label>
+                </div>
+
+                <button type="button" class="btn-cta" id="btn-next-step" style="width: 100%; border: none; text-align: center; margin-top: 20px;">AVANÇAR PARA PERFIL PROFISSIONAL →</button>
+                <button type="button" class="btn-cta hidden" id="btn-submit-contractor" style="width: 100%; border: none; text-align: center; margin-top: 20px; background-color: var(--cor-al-blue-primary); box-shadow: 0 5px 0 var(--cor-al-blue-dark);">FINALIZAR MEU CADASTRO DE CONTRATANTE ✓</button>
+            </div>
+
+            <div id="step-2" class="form-step" style="display: none;">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom:15px;">Passo 2: Perfil Profissional</h3>
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" placeholder="Ex: José Oliveira da Silva">
+                </div>
+                <div class="form-group">
+                    <label for="birth_date">Data de Nascimento</label>
+                    <input type="date" id="birth_date">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone / WhatsApp</label>
+                    <input type="tel" id="phone" placeholder="(82) 99999-0000" maxlength="15">
+                </div>
+                <div class="form-group">
+                    <label for="city">Seu Município de Atuação/Moradia</label>
+                    <select id="city">
+                        <option value="" disabled selected>Escolha sua cidade...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="service">Eixo Setorial Principal</label>
+                    <select id="service">
+                        <option value="" disabled selected>Selecione sua categoria...</option>
+                        <option value="1">Produção Rural</option>
+                        <option value="2">Construção</option>
+                        <option value="3">Artesanato</option>
+                        <option value="4">Logística</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo">Sua Foto de Perfil (Opcional)</label>
+                    <input type="file" id="photo" accept="image/*" style="padding:10px 0;">
+                </div>
+
+                <div class="form-group">
+                    <label for="raw-bio">Fale do seu jeito sobre o que você sabe fazer</label>
+                    <textarea id="raw-bio" rows="4" placeholder="Ex: Sei fazer reboco e assentar tijolo. Sou pedreiro em Penedo."></textarea>
+                    
+                    <div class="ai-container">
+                        <div class="ai-header">
+                            <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                            <button type="button" class="btn-ai" id="btn-optimize">Melhorar meu Texto com IA</button>
+                        </div>
+                        <div class="ai-preview" id="ai-preview"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-cta" id="btn-prev-step" style="background: #666; width: 40%; border: none; text-align: center;">← VOLTAR</button>
+                    <button type="submit" class="btn-cta" style="width: 60%; border: none; text-align: center;">CONFIRMAR E PUBLICAR PERFIL</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/cadastro.js"></script>
+</body>
+</html>

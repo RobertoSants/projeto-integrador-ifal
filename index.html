@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Talentos - Alagoas Regional (AMA)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">TALENTOS <span>ALAGOAS</span></div>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
+            <a href="#inicio">INÍCIO</a>
+            <a href="#setores">EIXOS SETORIAIS</a>
+            <a href="#talentos">REGIONAL</a>
+            <a href="#capital">ESTADO</a>
+            <a href="perfil.html" id="menu-perfil" style="color: var(--cor-al-blue-primary)">MEU PERFIL</a>
+            <a href="cadastro.html" id="menu-cadastrar" style="color: var(--cor-al-red-primary)">CADASTRAR PERFIL</a>
+            <a href="#" id="menu-logout" style="color: #666;" class="hidden">SAIR</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+        <h1>O TALENTO DO <span>INTERIOR</span> <br>VALORIZADO COMO NUNCA.</h1>
+        <p>Priorizamos o desenvolvimento regional conectando profissionais autônomos aos contratantes de seus próprios municípios. Fortalecendo a economia local, de Delmiro a Penedo.</p>
+    </section>
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Qual serviço você precisa?">
+        <select id="city-select">
+            <option value="">Selecione seu Municipio</option>
+        </select>
+        <button class="btn-cta" id="search-button" style="padding: 10px; border: none; box-shadow: none;">BUSCAR</button>
+        <button class="btn-cta btn-reset" id="reset-button" style="padding: 10px; border: none;">LIMPAR</button>
+    </div>
+
+    <section class="section" id="setores">
+        <h2>DESENVOLVIMENTO REGIONAL (AMA)</h2>
+        <p>Foco nas demandas reais das cidades do interior de Alagoas.</p>
+        <div class="grid-sectors">
+            <div class="sector-card" data-service-id="1"><span>🚜</span><h3>Produção Rural</h3></div>
+            <div class="sector-card" data-service-id="2"><span>🏗️</span><h3>Construção</h3></div>
+            <div class="sector-card" data-service-id="3"><span>🧶</span><h3>Artesanato</h3></div>
+            <div class="sector-card" data-service-id="4"><span>📦</span><h3>Logística</h3></div>
+        </div>
+    </section>
+
+    <section class="section" id="talentos" style="background: white;">
+        <h2>TALENTOS DA SUA REGIÃO EM DESTAQUE</h2>
+        <p id="results-count">Carregando talentos regionais...</p>
+        <div class="talents-grid" id="talents-container"></div>
+    </section>
+
+    <section class="section capital-section" id="capital">
+        <div id="capital-dynamic-wrapper">
+            <h2>OUTRAS LOCALIDADES DE ALAGOAS</h2>
+            <p id="capital-count">Carregando talentos do estado...</p>
+            <div class="talents-grid" id="capital-container"></div>
+        </div>
+    </section>
+
+    <footer>
+        <h2>BANCO DE TALENTOS ALAGOAS</h2>
+        <p>© 2026 - Sistemas de Informação IFAL - Campus Maceió • Projeto Integrador</p>
+    </footer>
+
+    <script src="js/index.js"></script>
+</body>
+</html>

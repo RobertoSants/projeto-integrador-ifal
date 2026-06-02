@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Profissional - Alagoas Regional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/detalhes.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">TALENTOS <span>ALAGOAS</span></div>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
+            <a href="index.html">HOME</a>
+            <a href="perfil.html" id="menu-perfil">MEU PERFIL</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="profile-container" id="profile-content">
+            <p>Carregando dados do profissional...</p>
+        </div>
+
+        <div class="review-box">
+            <h3>Deixar uma Avaliação Real</h3>
+            <form id="review-form">
+                <div class="form-group">
+                    <label for="review-rating">Sua Nota:</label>
+                    <select id="review-rating" class="rating-select" required>
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4)</option>
+                        <option value="3">⭐⭐⭐ (3)</option>
+                        <option value="2">⭐⭐ (2)</option>
+                        <option value="1">⭐ (1)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="review-comment">Seu Comentário sobre o Serviço:</label>
+                    <textarea id="review-comment" class="comment-area" placeholder="Ex: Excelente pedreiro, terminou o acabamento do banheiro antes do prazo e cobrou preço justo." required></textarea>
+                </div>
+                <button type="submit" class="btn-cta" style="border:none;">PUBLICAR AVALIAÇÃO</button>
+            </form>
+        </div>
+
+        <div class="review-box" style="margin-top:20px;">
+            <h3>Histórico de Depoimentos</h3>
+            <div id="comments-list"><p style="color:#666;">Nenhum comentário registrado ainda.</p></div>
+        </div>
+    </div>
+
+    <script src="js/detalhes.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Usuário - Banco de Talentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/perfil.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">TALENTOS <span>ALAGOAS</span></div>
+        <button class="hamburger" id="hamburger" aria-label="Abrir Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-menu">
+            <a href="index.html">HOME</a>
+            <a href="#" id="panel-logout" class="hidden" style="color:var(--cor-al-red-primary)">ENCERRAR SESSÃO</a>
+        </nav>
+    </header>
+
+    <div class="container" style="background:transparent; box-shadow:none; padding:0; border:none; max-width:800px;">
+        
+        <div id="login-gate" class="auth-container">
+            <h2 style="color: var(--cor-al-blue-primary); margin-bottom: 10px;">Acessar Minha Conta</h2>
+            <p style="color:#666; margin-bottom: 20px; font-size:14px;">Insira suas credenciais de acesso para gerenciar o seu perfil.</p>
+            <form id="gate-login-form">
+                <div class="form-group">
+                    <label for="gate-username">Usuário</label>
+                    <input type="text" id="gate-username" required placeholder="Ex: jose_pedreiro" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="gate-password">Senha</label>
+                    <input type="password" id="gate-password" required placeholder="Sua senha de acesso" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-cta" style="width: 100%; border: none; margin-top: 10px;">ENTRAR NO PAINEL</button>
+            </form>
+        </div>
+
+        <div id="main-panel" class="hidden">
+            <h1 style="color: var(--cor-al-blue-primary); margin-bottom: 5px;">Painel Administrativo</h1>
+            <p class="subtitle" id="panel-subtitle">Atualize suas informações.</p>
+
+            <div class="panel-section" id="worker-data-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;" id="worker-section-title">Meus Dados Profissionais</h3>
+                <form id="update-profile-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="edit-name">Nome Completo</label>
+                        <input type="text" id="edit-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-birth-date">Data de Nascimento</label>
+                        <input type="date" id="edit-birth-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Telefone / WhatsApp</label>
+                        <input type="tel" id="edit-phone" placeholder="(82) 99999-0000" maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-worker-city">Sua Cidade de Atuação</label>
+                        <select id="edit-worker-city"></select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="group-edit-service">
+                        <label for="edit-service">Eixo Setorial Principal</label>
+                        <select id="edit-service">
+                            <option value="" disabled selected>Selecione sua categoria...</option>
+                            <option value="1">Produção Rural</option>
+                            <option value="2">Construção</option>
+                            <option value="3">Artesanato</option>
+                            <option value="4">Logística</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-photo">Foto de Perfil (Opcional)</label>
+                        <input type="file" id="edit-photo" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Biografia Profissional</label>
+                        <textarea id="edit-bio" rows="5" placeholder="Fale do seu jeito sobre o que você sabe fazer..."></textarea>
+                        
+                        <div class="ai-container" style="margin-top: 15px;">
+                            <div class="ai-header">
+                                <div class="ai-title">✨ Assistente de Perfil Inteligente</div>
+                                <button type="button" class="btn-ai" id="btn-edit-optimize">Melhorar meu Texto com IA</button>
+                            </div>
+                            <div class="ai-preview" id="edit-ai-preview"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-cta" id="btn-save">SALVAR DADOS</button>
+                </form>
+            </div>
+
+            <div class="panel-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Dados de Conta</h3>
+                <form id="update-account-form">
+                    <div class="form-group">
+                        <label for="edit-username">Nome de Usuário (Login)</label>
+                        <input type="text" id="edit-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">E-mail</label>
+                        <input type="email" id="edit-email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-account-city">Cidade de Residência</label>
+                        <select id="edit-account-city" required></select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
+                        <button type="submit" class="btn-cta" id="btn-save-account" style="flex: 1; min-width: 200px;">ATUALIZAR DADOS</button>
+                        <button type="button" class="btn-cta btn-danger" id="btn-delete-account" style="flex: 1; min-width: 200px; background-color: var(--cor-al-red-primary); box-shadow: 0 5px 0 var(--cor-al-red-dark);">EXCLUIR MINHA CONTA</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel-section">
+                <h3 style="color: var(--cor-al-blue-primary); margin-bottom: 15px;">Alterar Senha</h3>
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="pass-old">Senha Atual</label>
+                        <input type="password" id="pass-old" required placeholder="Digite a senha usada hoje" autocomplete="current-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="pass-new">Nova Senha</label>
+                        <input type="password" id="pass-new" required placeholder="Mínimo de 8 caracteres" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn-cta btn-danger" id="btn-pass" style="border:none; background-color: var(--cor-al-red-primary); box-shadow: 0 5px 0 var(--cor-al-red-dark);">ATUALIZAR SENHA</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/perfil.js"></script>
+</body>
+</html>
