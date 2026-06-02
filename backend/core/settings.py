@@ -110,6 +110,10 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Correção essencial de Infraestrutura para o Render (Whitenoise/Nativo):
+# Permite o mapeamento correto do diretório de coleta estática em servidores de produção Linux.
+STATICFILES_DIRS = []
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -137,7 +141,11 @@ SIMPLE_JWT = {
     "AUTH_COOKIE": "access_token",
     "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS activa
     "AUTH_COOKIE_SECURE": not DEBUG, # Ajustado dinamicamente: True em produção, False local
-    "AUTH_COOKIE_SAMESITE": "Lax",   
+    
+    # AJUSTE SEGURO DE PRODUÇÃO (RESOLVE O BUG 401 DE COOKIES CROSSLINKADOS):
+    # Em produção (not DEBUG), SameSite deve ser estritamente "None" para trafegar do GitHub Pages ao Render.
+    # Em desenvolvimento local (DEBUG=True), mantém "Lax" para não exigir HTTPS na máquina local.
+    "AUTH_COOKIE_SAMESITE": "Lax" if DEBUG else "None",   
 }
 
 # [SEGURANÇA] Controle estrito de Origens do CORS para as portas locais e links externos de produção
