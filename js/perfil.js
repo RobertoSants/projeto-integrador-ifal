@@ -5,7 +5,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     let currentProfileId = null;
     let finalBio = "";
-    let isWorker = false; // Controla se é atualização (PUT) ou criação (POST)
+    let isWorker = false; 
+    let base64EditPhoto = ""; // Armazena a string Base64 da foto na edição
     
     const loginGate = document.getElementById("login-gate");
     const mainPanel = document.getElementById("main-panel");
@@ -19,6 +20,25 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("edit-phone")?.addEventListener("input", function(e) {
         let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+    });
+
+    // Captura, valida tamanho (1.5MB) e converte a foto do painel de edição
+    document.getElementById("edit-photo")?.addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 1572864) {
+            alert("⚠️ Arquivo muito pesado! Selecione uma foto de perfil menor com no máximo 1.5 MB.");
+            e.target.value = "";
+            base64EditPhoto = "";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            base64EditPhoto = reader.result;
+        };
+        reader.readAsDataURL(file);
     });
 
     function calculateAge(birthDateString) {
@@ -55,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const userData = await accountResponse.json();
             
-            // OPERADORES DE CHECAGEM SEGURA (?): Evitam o crash se o elemento sumir do HTML
             if (document.getElementById("edit-email")) document.getElementById("edit-email").value = userData.email || ""; 
             if (document.getElementById("edit-username")) document.getElementById("edit-username").value = userData.username || ""; 
             if (document.getElementById("edit-account-city")) document.getElementById("edit-account-city").value = userData.city || "";
@@ -90,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (document.getElementById("edit-worker-city")) document.getElementById("edit-worker-city").value = myProfile.city || "";
                 if (document.getElementById("edit-bio")) document.getElementById("edit-bio").value = myProfile.bio || "";
+                if (myProfile.photo_url) base64EditPhoto = myProfile.photo_url; // Mantém a foto anterior se não for alterada
             }
             
             if (loginGate) loginGate.classList.add("hidden");
@@ -156,12 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (loginRes.ok) {
                 setTimeout(fetchMyProfile, 200);
             } else {
-                const errData = await loginRes.json();
                 alert("Não foi possível entrar. Verifique seu usuário/senha ou limpe os cookies do navegador móvel.");
             }
-        } catch(err) { 
-            alert("Erro de comunicação com o servidor backend."); 
-        }
+        } catch(err) { alert("Erro de comunicação com o servidor backend."); }
     });
 
     logoutNav?.addEventListener("click", async (e) => {
@@ -216,9 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const errData = await userRes.json();
                 if (errData.username) {
                     alert("⚠️ Erro de Validação: Este Nome de Usuário (Login) já está sendo utilizado por outra pessoa. Escolha outro nome.");
-                } else {
-                    alert("Verifique os dados digitados.");
-                }
+                } else { alert("Verifique os dados digitados."); }
             }
         } finally { btnAcc.innerText = "ATUALIZAR DADOS"; }
     });
@@ -234,15 +249,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (btnSaveWorker) btnSaveWorker.innerText = "Salvando...";
         try {
-            const formData = new FormData();
-            formData.append("full_name", document.getElementById("edit-name").value);
-            formData.append("birth_date", birthDate);
-            formData.append("phone", document.getElementById("edit-phone").value.replace(/\D/g, ""));
-            formData.append("city", document.getElementById("edit-worker-city").value);
-            formData.append("bio", document.getElementById("edit-bio").value.trim());
-            
-            const photoInput = document.getElementById("edit-photo");
-            if(photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
+            // Conversão do payload de edição profissional para objeto JSON puro
+            const payload = {
+                full_name: document.getElementById("edit-name").value,
+                birth_date: birthDate,
+                phone: document.getElementById("edit-phone").value.replace(/\D/g, ""),
+                city: document.getElementById("edit-worker-city").value,
+                state: "AL",
+                bio: document.getElementById("edit-bio").value.trim(),
+                photo: base64EditPhoto // Texto Base64 salvo diretamente
+            };
 
             let url = `https://banco-talentos-api.onrender.com/api/workers/${currentProfileId}/`;
             let method = "PUT";
@@ -251,10 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 url = "https://banco-talentos-api.onrender.com/api/workers/";
                 method = "POST";
                 const serviceVal = document.getElementById("edit-service").value;
-                formData.append("services", parseInt(serviceVal));
+                payload.services = [parseInt(serviceVal)];
             }
 
-            const res = await fetch(url, { method: method, credentials: "include", body: formData });
+            const res = await fetch(url, { 
+                method: method, 
+                credentials: "include", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload) 
+            });
+            
             if(res.ok) { 
                 alert(isWorker ? "Perfil profissional atualizado!" : "Perfil de Trabalhador ativado com sucesso!"); 
                 window.location.href = "index.html"; 
