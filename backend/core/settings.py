@@ -7,6 +7,7 @@ Foco: Segurança Avançada & Conformidade com LGPD
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -70,16 +71,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default="5432"),
+# ADAPTAÇÃO INTEGRADA DE BANCO DE DADOS:
+# Lê de forma inteligente a string única em produção ou recorre aos parâmetros individuais locais.
+DATABASE_URL = config("DATABASE_URL", default=None)
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME"),
+            "USER": config("DB_USER"),
+            "PASSWORD": config("DB_PASSWORD"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default="5432"),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -94,6 +108,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -119,21 +135,18 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     
     "AUTH_COOKIE": "access_token",
-    "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS ativa
-    "AUTH_COOKIE_SECURE": False,     # OBRIGATÓRIO False para permitir tráfego local sem HTTPS
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Proteção XSS activa
+    "AUTH_COOKIE_SECURE": not DEBUG, # Ajustado dinamicamente: True em produção, False local
     "AUTH_COOKIE_SAMESITE": "Lax",   
 }
 
-# [SEGURANÇA] Controle estrito de Origens do CORS para as portas do Live Server
+# [SEGURANÇA] Controle estrito de Origens do CORS para as portas locais e links externos de produção
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "http://localhost:5501",
-    "http://127.0.0.1:5501",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501,http://localhost:3000,http://127.0.0.1:3000",
+    cast=lambda v: [s.strip() for s in v.split(",")]
+)
 CORS_ALLOW_CREDENTIALS = True # Essencial para permitir o tráfego dos cookies HttpOnly
 
 # [SEGURANÇA OBRIGATÓRIA PARA DEPLOY / PRODUÇÃO]
