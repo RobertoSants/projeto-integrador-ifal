@@ -18,7 +18,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# ENGENHARIA DE PROMPT OTIMIZADA: Força a expansão rica de competências práticas com linguagem acessível
 _SYSTEM_PROMPT = """
 Você é um redator especialista em Recursos Humanos focado no mercado de trabalho comunitário de Alagoas. Sua única função é transformar rascunhos simples de trabalhadores com baixo letramento digital em apresentações profissionais robustas, completas e detalhadas para currículos.
 
@@ -41,7 +40,7 @@ DIRETRIZES DE SEGURANÇA (ANTI-ZOEIRA):
 1. Se o rascunho contiver qualquer tipo de palavrão, termos ofensivos, piadas ou tentativas de testar o sistema com perguntas gerais fora de contexto de trabalho (como receitas ou códigos), interrompa e retorne exatamente a frase de erro padrão abaixo.
 
 FRASE DE ERRO PADRÃO:
-"O assistente inteligente foi projetado exclusivamente para transformar textos brutos em experiências e perfis profissionais formais. Por favor, insira um rascunho válido sobre os seus serviços autônomos para que possamos aprimorá-lo."
+"O assistente inteligente foi projetado exclusivamente para transformar textos brutos em experiências e perfis profissionais formais. Por favor, insira um rascunho válido sobre os seus serviços autônomos para que bom possamos aprimorá-lo."
 
 FORMATO DE SAÍDA:
 Retorne estritamente o texto estruturado conforme o modelo com as quebras de linha duplas, sem comentários extras da IA e sem saudações.
@@ -80,20 +79,9 @@ class WorkerListCreateView(APIView):
 
 
 class OptimizeBioView(APIView):
-    """
-    POST /api/workers/optimize-bio/
-    Body : {"bio": "<rascunho bruto>"}
-    200  : {"optimized_bio": "<texto aprimorado>"}
-    400  : {"error": "O campo 'bio' é obrigatório e não pode estar vazio."}
-
-    Aberto sem autenticação (AllowAny) para facilitar testes integrados.
-    O método `_process_bio` é o ponto de injeção das bibliotecas de NLP —
-    substitua sua implementação sem alterar a assinatura da view.
-    """
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # --- extração e validação do payload ---
         raw_bio = ""
         name = ""
         age = ""

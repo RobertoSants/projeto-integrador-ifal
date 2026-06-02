@@ -26,9 +26,16 @@ async function loadCities() {
 async function checkSession() {
     try {
         const response = await fetch("http://localhost:8000/api/auth/refresh/", { method: "POST", credentials: "include" });
-        if (response.ok) {
+        
+        // CORREÇÃO DO BUG DO REFRESH ANÔNIMO (ISSUE #11)
+        // Só exibe o menu de logout se o status for estritamente 200 (Sessão válida)
+        if (response.status === 200) {
             document.getElementById("menu-logout").classList.remove("hidden");
             document.getElementById("menu-cadastrar").classList.add("hidden");
+        } else {
+            // Se for 204 ou qualquer outro status anônimo, garante que os botões voltem ao estado inicial
+            document.getElementById("menu-logout").classList.add("hidden");
+            document.getElementById("menu-cadastrar").classList.remove("hidden");
         }
     } catch (e) { console.log("Usuário navegando de forma anônima."); }
 }
