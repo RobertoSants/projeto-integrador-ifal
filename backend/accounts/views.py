@@ -53,11 +53,9 @@ class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
         
+        # Se não houver cookie, o usuário está deslogado. Retorna 204 para o front não mostrar erro.
         if not refresh_token:
-            return Response(
-                {"detail": "Nenhuma sessão ativa localizada."}, 
-                status=status.HTTP_204_NO_CONTENT
-            )
+            return Response({"detail": "Não autenticado."}, status=status.HTTP_204_NO_CONTENT)
             
         request.data["refresh"] = refresh_token
         
@@ -68,8 +66,9 @@ class CustomTokenRefreshView(TokenRefreshView):
                 del response.data["access"]
                 _set_auth_cookies(response, access_token)
             return response
-        except (InvalidToken, TokenError):
-            res = Response({"detail": "Sessão expirada."}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception:
+            # Em caso de token inválido ou usuário deletado, limpa os cookies e força deslogar
+            res = Response({"detail": "Sessão inválida."}, status=status.HTTP_401_UNAUTHORIZED)
             res.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
             res.delete_cookie("refresh_token")
             return res

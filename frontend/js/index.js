@@ -85,7 +85,13 @@ async function fetchWorkers() {
     const finalUrl = `https://banco-talentos-api.onrender.com/api/search/${queryString}`;
 
     try {
-        const response = await fetch(finalUrl, { method: "GET", credentials: "include" });
+        let response = await fetch(finalUrl, { method: "GET", credentials: "include" });
+        
+        // Se a sessão expirou ou o token sumiu (401), tenta buscar sem credenciais (anônimo)
+        if (response.status === 401) {
+            response = await fetch(finalUrl, { method: "GET", credentials: "omit" });
+        }
+
         if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
         
         const data = await response.json();
@@ -103,8 +109,8 @@ async function fetchWorkers() {
             renderGroup(otherWorkers, capitalContainer, capitalCountTxt, "outros profissionais disponíveis no estado", city);
         }
     } catch (error) {
-        console.error("Detalhes do erro de conexão:", error);
-        countTxt.innerText = "Erro ao conectar com o servidor backend.";
+        console.error("Erro na busca:", error);
+        countTxt.innerText = "Erro ao carregar talentos.";
     }
 }
 
