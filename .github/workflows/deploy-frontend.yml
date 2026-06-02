@@ -1,0 +1,22 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # Altere para main se a sua branch principal for main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Publicar apenas a pasta frontend no GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: frontend # Indica para a Action pegar estritamente a sua pasta frontend
+          branch: gh-pages # A Action vai criar e atualizar essa branch oculta automaticamente
