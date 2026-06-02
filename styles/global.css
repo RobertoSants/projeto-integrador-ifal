@@ -430,12 +430,12 @@ footer p {
         left: 0;
     }
 
-    /* Ajuste de escala e centralização perfeita do brasão de Alagoas no Hero Mobile */
+    /* Meio-termo responsivo: Preserva a legibilidade dos textos e o enquadramento do fundo */
     .hero {
-        height: 45vh; /* Diminui a altura para enquadrar perfeitamente no celular */
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                    url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') no-repeat center center;
-        background-size: 100% 100%; /* Obriga o fundo a se moldar aos limites da tela mobile sem esticar */
+        height: 60vh; /* Altura equilibrada para dar respiro aos componentes */
+        background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), 
+                    url('https://cdn.vectorstock.com/i/500p/05/17/alagoas-state-brazil-province-retro-travel-plate-vector-50290517.jpg') no-repeat top center;
+        background-size: cover; /* Permite que o brasão preencha o fundo de forma fluida e elegante */
     }
 
     .hero h1 { 
