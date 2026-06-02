@@ -54,17 +54,18 @@ class WorkerCreateSerializer(serializers.ModelSerializer):
 
     def validate_birth_date(self, value):
         today = date.today()
-        age = today.year - value.year - ((today.month, today.day) < (value.year, value.day))
+        age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
         if age < 18:
-            raise serializers.ValidationError("É obrigatório ter mais de 18 anos para anunciar serviços.")
+            raise serializers.ValidationError("É obrigatório ter mais de 18 anos.")
         return value
 
     def validate_phone(self, value):
         clean_phone = re.sub(r"\D", "", value)
         if not (10 <= len(clean_phone) <= 11):
-            raise serializers.ValidationError("O telefone deve conter um formato regional válido com DDD.")
+            raise serializers.ValidationError("O telefone deve conter formato regional válido.")
         return clean_phone
 
+    # AJUSTE ANTI-CRASH 500: Garante salvamento seguro de strings longas
     def create(self, validated_data):
         services = validated_data.pop("services", [])
         worker = Worker.objects.create(**validated_data)
