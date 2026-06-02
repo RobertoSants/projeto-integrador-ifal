@@ -39,7 +39,7 @@ async function loadCities() {
 
 async function checkInitialSession() {
     try {
-        const res = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
+        const res = await fetch("https://banco-talentos-api.onrender.com/api/accounts/me/", { method: "GET", credentials: "include" });
         if (res.ok) {
             isAlreadyLogged = true;
             document.getElementById("cadastro-title").innerText = "Complete seu Perfil";
@@ -136,7 +136,7 @@ async function submitAccountOnly() {
     const consentimento = document.getElementById("consentimento").checked;
 
     try {
-        const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
+        const regRes = await fetch("https://banco-talentos-api.onrender.com/api/accounts/register/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password, password_confirm: password, city: "Maceió", state: "AL", consentimento })
@@ -146,7 +146,7 @@ async function submitAccountOnly() {
             alert(`Erro no registro: ${errData.email || errData.username || "Dados inválidos."}`); 
             return; 
         }
-        const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+        const loginRes = await fetch("https://banco-talentos-api.onrender.com/api/auth/login/", {
             method: "POST", credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })
@@ -192,7 +192,7 @@ btnOptimize.addEventListener('click', async () => {
 
     btnOptimize.innerText = 'Processando...';
     try {
-        const response = await fetch("http://localhost:8000/api/workers/optimize-bio/", {
+        const response = await fetch("https://banco-talentos-api.onrender.com/api/workers/optimize-bio/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ bio: rawBioVal, name: nameVal, age: calculatedAge })
@@ -235,7 +235,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
 
-            const regRes = await fetch("http://localhost:8000/api/accounts/register/", {
+            const regRes = await fetch("https://banco-talentos-api.onrender.com/api/accounts/register/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password, password_confirm: password, city, state: "AL", consentimento: true, first_name: full_name })
@@ -244,7 +244,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
                 alert("Erro ao criar conta de acesso.");
                 return;
             }
-            await fetch("http://localhost:8000/api/auth/login/", {
+            await fetch("https://banco-talentos-api.onrender.com/api/auth/login/", {
                 method: "POST", credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
@@ -263,7 +263,7 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
         const photoInput = document.getElementById("photo");
         if (photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
 
-        const workerRes = await fetch("http://localhost:8000/api/workers/", { method: "POST", credentials: "include", body: formData });
+        const workerRes = await fetch("https://banco-talentos-api.onrender.com/api/workers/", { method: "POST", credentials: "include", body: formData });
         
         if (workerRes.ok) {
             alert("Perfil profissional publicado com sucesso! Redirecionando...");

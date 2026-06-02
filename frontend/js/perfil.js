@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchMyProfile() {
         try {
-            const accountResponse = await fetch("http://localhost:8000/api/accounts/me/", { method: "GET", credentials: "include" });
+            const accountResponse = await fetch("https://banco-talentos-api.onrender.com/api/accounts/me/", { method: "GET", credentials: "include" });
             if (!accountResponse.ok) { showLoginGate(); return; }
             
             const userData = await accountResponse.json();
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (document.getElementById("edit-account-city")) document.getElementById("edit-account-city").value = userData.city || "";
             if (document.getElementById("edit-first-name")) document.getElementById("edit-first-name").value = userData.first_name || "";
 
-            const response = await fetch("http://localhost:8000/api/workers/me/", { method: "GET", credentials: "include" });
+            const response = await fetch("https://banco-talentos-api.onrender.com/api/workers/me/", { method: "GET", credentials: "include" });
             
             if (response.status === 404) {
                 isWorker = false;
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btnAi.innerText = "Processando...";
         try {
-            const response = await fetch("http://localhost:8000/api/workers/optimize-bio/", {
+            const response = await fetch("https://banco-talentos-api.onrender.com/api/workers/optimize-bio/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ bio: rawBioVal, name: nameVal, age: age })
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = document.getElementById("gate-username").value.trim();
         const password = document.getElementById("gate-password").value;
         try {
-            const loginRes = await fetch("http://localhost:8000/api/auth/login/", {
+            const loginRes = await fetch("https://banco-talentos-api.onrender.com/api/auth/login/", {
                 method: "POST", credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     logoutNav?.addEventListener("click", async (e) => {
         e.preventDefault();
-        const res = await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
+        const res = await fetch("https://banco-talentos-api.onrender.com/api/auth/logout/", { method: "POST", credentials: "include" });
         if (res.ok) window.location.href = "index.html";
     });
 
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const confirmacao = confirm("⚠️ ATENÇÃO - AÇÃO IRREVERSÍVEL ⚠️\n\nTem certeza absoluta de que deseja excluir sua conta?\nTodos os seus dados de conta, perfil profissional e depoimentos serão apagados permanentemente das nossas bases de dados.");
         if (!confirmacao) return;
         try {
-            const res = await fetch("http://localhost:8000/api/accounts/me/", { method: "DELETE", credentials: "include" });
+            const res = await fetch("https://banco-talentos-api.onrender.com/api/accounts/me/", { method: "DELETE", credentials: "include" });
             if (res.ok) {
                 alert("Sua conta foi excluída permanentemente de acordo com as diretrizes da LGPD.");
                 window.location.href = "index.html";
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btnAcc.innerText = "Salvando...";
         try {
-            const userRes = await fetch("http://localhost:8000/api/accounts/me/", {
+            const userRes = await fetch("https://banco-talentos-api.onrender.com/api/accounts/me/", {
                 method: "PUT", credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
@@ -242,11 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const photoInput = document.getElementById("edit-photo");
             if(photoInput && photoInput.files.length > 0) formData.append("photo", photoInput.files[0]);
 
-            let url = `http://localhost:8000/api/workers/${currentProfileId}/`;
+            let url = `https://banco-talentos-api.onrender.com/api/workers/${currentProfileId}/`;
             let method = "PUT";
 
             if (!isWorker) {
-                url = "http://localhost:8000/api/workers/";
+                url = "https://banco-talentos-api.onrender.com/api/workers/";
                 method = "POST";
                 const serviceVal = document.getElementById("edit-service").value;
                 formData.append("services", parseInt(serviceVal));
@@ -265,14 +265,14 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         const old_password = document.getElementById("pass-old").value;
         const new_password = document.getElementById("pass-new").value;
-        const res = await fetch("http://localhost:8000/api/accounts/password/change/", {
+        const res = await fetch("https://banco-talentos-api.onrender.com/api/accounts/password/change/", {
             method: "POST", credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ old_password, new_password })
         });
         if (res.ok) {
             alert("Senha alterada! Faça login novamente.");
-            await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
+            await fetch("https://banco-talentos-api.onrender.com/api/auth/logout/", { method: "POST", credentials: "include" });
             window.location.reload();
         }
     });

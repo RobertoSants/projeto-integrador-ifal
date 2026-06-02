@@ -7,7 +7,7 @@ Responsável Backend: João Victhor
 ## Base URL
 
 ```
-http://localhost:8000/api/
+https://banco-talentos-api.onrender.com/api/
 ```
 
 Em produção, substituir pelo domínio do servidor.

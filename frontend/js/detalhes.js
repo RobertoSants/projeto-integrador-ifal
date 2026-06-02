@@ -21,7 +21,7 @@ function formatAuthorName(fullName, username) {
 
 async function loadProfile() {
     try {
-        const response = await fetch(`http://localhost:8000/api/workers/${workerId}/`, { method: "GET", credentials: "omit" });
+        const response = await fetch(`https://banco-talentos-api.onrender.com/api/workers/${workerId}/`, { method: "GET", credentials: "omit" });
         if (!response.ok) throw new Error("Erro ao buscar perfil.");
         
         const w = await response.json();
@@ -57,7 +57,7 @@ async function loadProfile() {
 
 async function loadReviews() {
     try {
-        const res = await fetch(`http://localhost:8000/api/workers/${workerId}/reviews/`, { method: "GET", credentials: "omit" });
+        const res = await fetch(`https://banco-talentos-api.onrender.com/api/workers/${workerId}/reviews/`, { method: "GET", credentials: "omit" });
         if (res.ok) {
             const reviews = await res.json();
             if(reviews.length > 0) {
@@ -88,7 +88,7 @@ document.getElementById('review-form').addEventListener('submit', async (e) => {
     const commentValue = document.getElementById('review-comment').value;
 
     try {
-        const res = await fetch(`http://localhost:8000/api/workers/${workerId}/reviews/`, {
+        const res = await fetch(`https://banco-talentos-api.onrender.com/api/workers/${workerId}/reviews/`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },

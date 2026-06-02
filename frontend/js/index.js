@@ -25,7 +25,7 @@ async function loadCities() {
 
 async function checkSession() {
     try {
-        const response = await fetch("http://localhost:8000/api/auth/refresh/", { method: "POST", credentials: "include" });
+        const response = await fetch("https://banco-talentos-api.onrender.com/api/auth/refresh/", { method: "POST", credentials: "include" });
         
         // CORREÇÃO DO BUG DO REFRESH ANÔNIMO (ISSUE #11)
         // Só exibe o menu de logout se o status for estritamente 200 (Sessão válida)
@@ -43,7 +43,7 @@ async function checkSession() {
 document.getElementById("menu-logout").addEventListener("click", async (e) => {
     e.preventDefault();
     try {
-        const res = await fetch("http://localhost:8000/api/auth/logout/", { method: "POST", credentials: "include" });
+        const res = await fetch("https://banco-talentos-api.onrender.com/api/auth/logout/", { method: "POST", credentials: "include" });
         if (res.ok) {
             alert("Sessão encerrada com sucesso.");
             window.location.reload();
@@ -82,7 +82,7 @@ async function fetchWorkers() {
     if (activeCategory) params.push(`service=${activeCategory}`);
 
     const queryString = params.length > 0 ? `?${params.join('&')}` : '';
-    const finalUrl = `http://localhost:8000/api/search/${queryString}`;
+    const finalUrl = `https://banco-talentos-api.onrender.com/api/search/${queryString}`;
 
     try {
         const response = await fetch(finalUrl, { method: "GET", credentials: "include" });
