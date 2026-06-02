@@ -65,6 +65,7 @@
     "fields": {
       "user": 102,
       "full_name": "Carlos Oliveira",
+      "birth_date": "1990-05-20",
       "bio": "Profissional de pintura residencial em Maceió",
       "phone": "82999990001",
       "city": "Maceió",
@@ -80,6 +81,7 @@
     "fields": {
       "user": 103,
       "full_name": "Marcos Silva",
+      "birth_date": "1988-09-12",
       "bio": "Profissional de elétrica e manutenção em Arapiraca",
       "phone": "82999990002",
       "city": "Arapiraca",
