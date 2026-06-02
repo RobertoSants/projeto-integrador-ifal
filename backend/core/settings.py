@@ -114,10 +114,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Armazenamento unificado para arquivos estáticos e de mídia via WhiteNoise
 STORAGES = {
     "default": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 

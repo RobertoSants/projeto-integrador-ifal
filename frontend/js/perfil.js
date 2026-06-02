@@ -154,12 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ username, password })
             });
             if (loginRes.ok) {
-                // Aguarda o cookie assentar e dispara o painel administrativo
-                setTimeout(fetchMyProfile, 100);
+                setTimeout(fetchMyProfile, 200);
             } else {
-                alert("Usuário ou senha incorretos.");
+                const errData = await loginRes.json();
+                alert("Não foi possível entrar. Verifique seu usuário/senha ou limpe os cookies do navegador móvel.");
             }
-        } catch(err) { alert("Erro de comunicação."); }
+        } catch(err) { 
+            alert("Erro de comunicação com o servidor backend."); 
+        }
     });
 
     logoutNav?.addEventListener("click", async (e) => {
